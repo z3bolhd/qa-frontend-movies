@@ -1,0 +1,56 @@
+import { notFound } from "next/navigation";
+import { getMovieById } from "@lib/api";
+import Image from "next/image";
+import Rating from "./components/Rating";
+import Reviews from "./components/Reviews";
+import BuyTicketButton from "./components/BuyTicketButton";
+
+const MoviePage = async ({ params }: { params: { id: string } }) => {
+  const movie = await getMovieById(params.id);
+
+  if (!movie) {
+    notFound();
+  }
+
+  const {
+    id,
+    name,
+    description,
+    imageUrl,
+    rating,
+    genre: { name: genreName },
+    reviews,
+    price,
+  } = movie;
+
+  return (
+    <main className="py-10">
+      <section className="w-full flex justify-between">
+        <div className="w-[500px]">
+          <h2 className="text-6xl">{name}</h2>
+          <p className="mt-10 text-lg">{description}</p>
+          <p className="text-lg mt-5">Жанр: {genreName}</p>
+          <Rating rating={rating} />
+          <div className="mt-5">
+            <BuyTicketButton movieId={id} price={price} />
+          </div>
+        </div>
+        <div>
+          {imageUrl ? (
+            <Image
+              src={imageUrl}
+              alt={name}
+              width={500}
+              height={500}
+              priority
+              className="w-[300px] max-w-[350px] object-cover rounded-lg"
+            />
+          ) : null}
+        </div>
+      </section>
+      <Reviews reviews={reviews} movieId={id} />
+    </main>
+  );
+};
+
+export default MoviePage;
