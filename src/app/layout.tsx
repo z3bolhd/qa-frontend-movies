@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { Rubik } from "next/font/google";
-import "./globals.css";
 
-import Header from "../components/Header";
 import AuthProvider from "@context/AuthProvider";
 import { AuthContext } from "@context/AuthContext";
 import ToasterContext from "@context/ToasterContext";
+
+import Header from "./_components/Header";
+import "./globals.css";
 
 const rubik = Rubik({ subsets: ["latin"] });
 
