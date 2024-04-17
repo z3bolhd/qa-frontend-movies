@@ -6,16 +6,18 @@ import UserPaymentsTable from "./Table";
 
 const UserPayments = () => {
   const [payments, setPayments] = useState<Payment[]>([]);
+  const [isError, setIsError] = useState(false);
   const { accessToken } = getUserSession();
 
   const fetchPayments = async () => {
     const payments = await getUserPayments(accessToken!);
 
-    console.log(payments);
-
     if (!payments) {
+      setIsError(true);
       return;
     }
+
+    setIsError(false);
 
     setPayments(payments);
   };
@@ -28,8 +30,10 @@ const UserPayments = () => {
     <div className="my-10">
       <h2 className="text-4xl">Платежи</h2>
 
-      {payments.length === 0 ? (
-        <p className="text-xl">Вы еще не оплатили ни один билет</p>
+      {isError ? (
+        <p className="text-xl mt-3">Произошла ошибка при получении платежей</p>
+      ) : payments.length === 0 ? (
+        <p className="text-xl mt-3">Вы еще не оплатили ни один билет</p>
       ) : (
         <UserPaymentsTable payments={payments} />
       )}
