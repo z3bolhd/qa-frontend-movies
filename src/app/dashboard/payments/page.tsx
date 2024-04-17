@@ -1,6 +1,6 @@
 "use client";
 
-import PaymentsTable from "./components/Table";
+import PaymentsTable from "./_components/Table";
 import { PaymentsDataContextProvider } from "@context/PaymentsDataContext";
 
 const PaymentsPage = () => {
