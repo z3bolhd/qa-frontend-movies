@@ -14,6 +14,7 @@ export type User = {
   email: string;
   fullName: string;
   verified: boolean;
+  banned: boolean;
   roles: Role[];
   createdAt?: Date;
 };

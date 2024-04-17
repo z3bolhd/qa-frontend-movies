@@ -15,6 +15,7 @@ export const userFormSchema = z.object({
     )
     .optional(),
   verified: z.boolean({ required_error: "Не может быть пустым" }),
+  banned: z.boolean({ required_error: "Не может быть пустым" }),
   roles: z.nativeEnum(Role, { required_error: "Не может быть пустым" }).array(),
 });
 

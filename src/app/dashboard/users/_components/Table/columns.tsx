@@ -7,9 +7,7 @@ const columns: ColumnDef<User>[] = [
   {
     accessorKey: "id",
     header: () => <div className="text-center text-black">Id</div>,
-    cell: ({ row }) => (
-      <div className="text-center truncate max-w-[80px]">{row.getValue("id")}</div>
-    ),
+    cell: ({ row }) => <div className="text-center">{row.getValue("id")}</div>,
   },
   {
     id: "email",
@@ -40,6 +38,15 @@ const columns: ColumnDef<User>[] = [
     cell: ({ row }) => {
       const verified = row.getValue("verified") ? "Да" : "Нет";
       return <div className="text-center">{verified}</div>;
+    },
+  },
+  {
+    id: "banned",
+    accessorKey: "banned",
+    header: () => <div className="w-full text-center text-black">Бан</div>,
+    cell: ({ row }) => {
+      const banned = row.getValue("banned") ? "Да" : "Нет";
+      return <div className="text-center">{banned}</div>;
     },
   },
   {

@@ -284,7 +284,7 @@ export const getUsers = async (params: GetUsersParams = {}, accessToken: string)
 };
 
 export const patchUser = async (
-  data: Pick<User, "id" | "verified" | "roles">,
+  data: Pick<User, "id" | "verified" | "roles" | "banned">,
   accessToken: string,
 ) => {
   const url = BACKEND_URL_AUTH + "/user/" + data.id;
@@ -306,7 +306,7 @@ export const patchUser = async (
 };
 
 export const createUser = async (
-  data: Pick<User, "fullName" | "email" | "verified"> & { password: string },
+  data: Pick<User, "fullName" | "email" | "verified" | "banned"> & { password: string },
   accessToken: string,
 ) => {
   const url = BACKEND_URL_AUTH + "/user/";

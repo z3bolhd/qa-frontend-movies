@@ -90,6 +90,7 @@ const UserDialogForm = ({
             <p className="mt-1 text-red-500 text-sm">{errors.email.message as string}</p>
           )}
         </div>
+
         {isCreate ? (
           <div className="mt-3">
             <Label htmlFor="password">Пароль</Label>
@@ -137,7 +138,7 @@ const UserDialogForm = ({
             <p className="mt-1 text-red-500 text-sm">{errors.roles.message as string}</p>
           )}
         </div>
-        <div className="mt-3 h-10 flex items-center">
+        <div className="mt-3 h-8 flex items-center">
           <Controller
             name="verified"
             control={control}
@@ -145,7 +146,7 @@ const UserDialogForm = ({
             render={({ field }) => (
               <>
                 <Checkbox
-                  id="published"
+                  id="verified"
                   className="h-[18px] w-[18px]"
                   defaultChecked={field.value}
                   onCheckedChange={() => field.onChange(!field.value)}
@@ -162,7 +163,32 @@ const UserDialogForm = ({
             <p className="mt-1 text-red-500 text-sm">{errors.verified.message as string}</p>
           )}
         </div>
-        <DialogFooter>
+        <div className="mt-3 h-8 flex items-center">
+          <Controller
+            name="banned"
+            control={control}
+            defaultValue={user?.banned || false}
+            render={({ field }) => (
+              <>
+                <Checkbox
+                  id="banned"
+                  className="h-[18px] w-[18px]"
+                  defaultChecked={field.value}
+                  onCheckedChange={() => field.onChange(!field.value)}
+                  {...register("banned")}
+                />
+
+                <Label htmlFor="banned" className="ml-2">
+                  Забанен
+                </Label>
+              </>
+            )}
+          />
+          {errors.banned && (
+            <p className="mt-1 text-red-500 text-sm">{errors.banned.message as string}</p>
+          )}
+        </div>
+        <DialogFooter className="mt-3">
           <Button type="submit" className="bg-blue-500 hover:bg-blue-600" disabled={isLoading}>
             {isLoading ? <LoadingSpinner size={16} /> : footerButtonText}
           </Button>

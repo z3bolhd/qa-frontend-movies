@@ -25,7 +25,10 @@ const UserCreate = () => {
 
   const onSubmit: SubmitHandler<UserFormSchema> = async (data) => {
     setIsLoading(true);
+
     const status = await createUser({ ...data, password: data.password! }, accessToken!);
+
+    setIsLoading(false);
 
     if (status === 201) {
       toast.success("Пользователь успешно создан");
@@ -35,8 +38,6 @@ const UserCreate = () => {
     }
 
     toast.error("Что-то пошло не так");
-
-    setIsLoading(false);
   };
 
   return (
