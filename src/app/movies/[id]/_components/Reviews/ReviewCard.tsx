@@ -49,7 +49,7 @@ const ReviewCard = ({
           </div>
         </CardHeader>
         <CardContent>
-          <p>{text}</p>
+          <p className="overflow-hidden text-ellipsis">{text}</p>
           <Rating rating={rating} />
         </CardContent>
       </Card>
