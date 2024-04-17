@@ -1,9 +1,25 @@
 import { notFound } from "next/navigation";
-import { getMovieById } from "@lib/api";
 import Image from "next/image";
+import { Metadata } from "next";
+
+import { getMovieById } from "@lib/api";
 import Rating from "./_components/Rating";
 import Reviews from "./_components/Reviews";
 import BuyTicketButton from "./_components/BuyTicketButton";
+
+export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+  const movie = await getMovieById(params.id);
+
+  return {
+    title: movie?.name + " | Cinescope",
+    description: movie?.description,
+    openGraph: {
+      title: movie?.name,
+      description: movie?.description,
+      images: [movie?.imageUrl || ""],
+    },
+  };
+}
 
 const MoviePage = async ({ params }: { params: { id: string } }) => {
   const movie = await getMovieById(params.id);

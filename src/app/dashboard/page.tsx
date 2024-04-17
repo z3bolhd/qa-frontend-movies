@@ -4,6 +4,13 @@ import { redirect } from "next/navigation";
 import { authOptions } from "@app/api/auth/[...nextauth]/options";
 import { Role } from "@lib/types";
 
+export const metadata = {
+  title: {
+    default: "Админ панель | Cinescope",
+  },
+  // description: "Админ панель",
+};
+
 const DashboardPage = async () => {
   const session = await getServerSession(authOptions);
 

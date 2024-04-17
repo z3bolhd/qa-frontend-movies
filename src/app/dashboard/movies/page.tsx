@@ -5,6 +5,7 @@ import { MoviesDataContextProvider } from "@context/MoviesDataContext";
 import MoviesTable from "./_components/Table";
 import MovieCreate from "./_components/MovieCreate";
 import MovieFilters from "./_components/MovieFilters";
+import { Metadata } from "next";
 
 const DashboardMoviesPage = () => {
   return (

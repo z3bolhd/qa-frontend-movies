@@ -3,6 +3,12 @@ import { GetMoviesParams } from "@lib/types";
 
 import MovieCard from "@app/_components/MovieCard";
 import MoviesPagination from "./_components/MoviesPagination";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Все фильмы | Cinescope",
+  description: "Все фильмы",
+};
 
 const Page = async ({ searchParams }: { searchParams?: GetMoviesParams }) => {
   const data = await getMovies({ ...searchParams, pageSize: 9, createdAt: "desc" });
