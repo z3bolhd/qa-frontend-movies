@@ -1,8 +1,8 @@
 "use client";
 
 import { GenresDataContextProvider } from "@context/GenresDataContext";
-import GenreCreate from "./components/GenreCreate";
-import GenresTable from "./components/Table";
+import GenreCreate from "./_components/GenreCreate";
+import GenresTable from "./_components/Table";
 
 const DashboardGenresPage = () => {
   return (

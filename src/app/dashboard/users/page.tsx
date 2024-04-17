@@ -2,8 +2,8 @@
 
 import { UsersDataContextProvider } from "@context/UsersDataContext";
 
-import UsersTable from "./components/Table";
-import UserCreate from "./components/UserCreate";
+import UsersTable from "./_components/Table";
+import UserCreate from "./_components/UserCreate";
 
 const DashboardUsersPage = () => {
   return (

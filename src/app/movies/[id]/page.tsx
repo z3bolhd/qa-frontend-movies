@@ -1,9 +1,9 @@
 import { notFound } from "next/navigation";
 import { getMovieById } from "@lib/api";
 import Image from "next/image";
-import Rating from "./components/Rating";
-import Reviews from "./components/Reviews";
-import BuyTicketButton from "./components/BuyTicketButton";
+import Rating from "./_components/Rating";
+import Reviews from "./_components/Reviews";
+import BuyTicketButton from "./_components/BuyTicketButton";
 
 const MoviePage = async ({ params }: { params: { id: string } }) => {
   const movie = await getMovieById(params.id);

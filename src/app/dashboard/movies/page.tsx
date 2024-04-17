@@ -2,9 +2,9 @@
 
 import { MoviesDataContextProvider } from "@context/MoviesDataContext";
 
-import MoviesTable from "./components/Table";
-import MovieCreate from "./components/MovieCreate";
-import MovieFilters from "./components/MovieFilters";
+import MoviesTable from "./_components/Table";
+import MovieCreate from "./_components/MovieCreate";
+import MovieFilters from "./_components/MovieFilters";
 
 const DashboardMoviesPage = () => {
   return (
