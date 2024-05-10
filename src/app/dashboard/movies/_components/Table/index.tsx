@@ -1,12 +1,14 @@
 "use client";
 
 import {
+  Updater,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { Dispatch } from "react";
 
 import columns from "./columns";
 import {
@@ -18,31 +20,40 @@ import {
   TableRow,
 } from "@components/ui/table";
 import { Button } from "@components/ui/button";
-import { useContext } from "react";
-import { MoviesDataContext } from "@context/MoviesDataContext";
-import LoadingSpinner from "@components/LoadingSpinner";
 
-const MoviesTable = () => {
-  const { movies, isLoading, pageCount, currentPage, setCurrentPage } =
-    useContext(MoviesDataContext);
+import { GetMoviesParams, GetMoviesResponse } from "@lib/types";
 
-  if (isLoading) {
-    return (
-      <div className="mt-36">
-        <LoadingSpinner size={50} />
-      </div>
-    );
+interface MoviesTableProps {
+  setFilters: Dispatch<Updater<GetMoviesParams>>;
+  moviesResponse: GetMoviesResponse | null | undefined;
+}
+
+const MoviesTable = ({ setFilters, moviesResponse }: MoviesTableProps) => {
+  // const { movies, isLoading, pageCount, currentPage, setCurrentPage } =
+  //   useContext(MoviesDataContext);
+
+  if (!moviesResponse) {
+    return null;
   }
 
   const table = useReactTable({
-    data: movies,
+    data: moviesResponse.movies,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    pageCount: pageCount,
-    rowCount: movies.length,
+    pageCount: moviesResponse.pageCount,
+    rowCount: moviesResponse.movies.length,
   });
+
+  const handleNextPage = () => {
+    console.log(moviesResponse);
+    setFilters((prev) => ({ ...prev, page: moviesResponse.page + 1 }));
+  };
+
+  const handlePreviousPage = () => {
+    setFilters((prev) => ({ ...prev, page: moviesResponse.page - 1 }));
+  };
 
   return (
     <>
@@ -85,27 +96,27 @@ const MoviesTable = () => {
           </TableBody>
         </Table>
       </div>
-      {movies.length ? (
+      {moviesResponse.movies.length ? (
         <div className="flex items-center justify-end space-x-2 py-4">
           <div className="text-black">
             <p className="text-sm">
-              Страница {currentPage} из {pageCount}
+              Страница {moviesResponse.page} из {moviesResponse.pageCount}
             </p>
           </div>
           <div className="space-x-2">
             <Button
               variant="outline"
               className="text-black"
-              onClick={() => setCurrentPage((prev) => prev - 1)}
-              disabled={currentPage === 1}
+              onClick={handlePreviousPage}
+              disabled={moviesResponse.page === 1}
             >
               Назад
             </Button>
             <Button
               variant="outline"
               className="text-black"
-              onClick={() => setCurrentPage((prev) => prev + 1)}
-              disabled={currentPage === pageCount}
+              onClick={handleNextPage}
+              disabled={moviesResponse.page === moviesResponse.pageCount}
             >
               Вперед
             </Button>

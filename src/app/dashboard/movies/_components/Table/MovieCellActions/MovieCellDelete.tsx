@@ -4,28 +4,31 @@ import toast from "react-hot-toast";
 import { Button } from "@components/ui/button";
 import { DialogClose, DialogFooter, DialogHeader, DialogTitle } from "@components/ui/dialog";
 
-import { MoviesDataContext } from "@context/MoviesDataContext";
+// import { MoviesDataContext } from "@context/MoviesDataContext";
 import { getUserSession } from "@hooks/getUserSession";
 import { deleteMovie } from "@lib/api";
 import { Movie } from "@lib/types";
+import { useMutation, useQueryClient } from "react-query";
 
 interface MovieCellDeleteProps extends Pick<Movie, "id" | "name"> {}
 
 const MovieCellDelete = ({ id, name }: MovieCellDeleteProps) => {
   const { accessToken } = getUserSession();
-  const { fetchMovies } = useContext(MoviesDataContext);
-  const [isLoading, setIsLoading] = useState(false);
+  const [setIsLoading] = useState(false);
+
+  const queryClient = useQueryClient();
+
+  const { mutateAsync, isLoading } = useMutation({
+    mutationFn: () => deleteMovie(id, accessToken!),
+  });
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    setIsLoading(true);
-    const status = await deleteMovie(id, accessToken!);
-    setIsLoading(false);
+    const status = await mutateAsync();
 
     if (status === 200) {
       toast.success("Фильм успешно удален");
-      fetchMovies();
+      queryClient.refetchQueries(["movies"]);
       document.getElementById("closeDialog")?.click();
       return;
     }
