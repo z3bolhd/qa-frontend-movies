@@ -29,14 +29,14 @@ const columns: ColumnDef<Payment>[] = [
   {
     id: "total",
     accessorKey: "total",
-    header: () => <div className="text-center text-black">Total</div>,
+    header: () => <div className="text-center text-black">К оплате</div>,
     cell: ({ row }) => <div className="text-center truncate">{row.getValue("total")}</div>,
   },
 
   {
     id: "amount",
     accessorKey: "amount",
-    header: () => <div className="text-center text-black">Amount</div>,
+    header: () => <div className="text-center text-black">Количество билетов</div>,
     cell: ({ row }) => <div className="text-center truncate">{row.getValue("amount")}</div>,
   },
 
