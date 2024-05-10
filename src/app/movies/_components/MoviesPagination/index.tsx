@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Pagination,
   PaginationContent,
@@ -6,6 +8,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@components/ui/pagination";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 interface MoviesPaginationProps {
   currentPage: string | number;
@@ -13,32 +16,40 @@ interface MoviesPaginationProps {
 }
 
 const MoviesPagination = ({ currentPage, pageCount }: MoviesPaginationProps) => {
+  const searchParams = useSearchParams();
+
+  const params = new URLSearchParams(searchParams.toString());
+  params.delete("page");
+
   currentPage = +currentPage;
+
+  const paramsString = params.toString() || "";
+  const nextPageHref = `/movies?page=${currentPage + 1}&${paramsString}`;
+  const prevPageHref = `/movies?page=${currentPage - 1}&${paramsString}`;
+  const currentPageHref = `/movies?page=${currentPage}&${paramsString}`;
 
   if (pageCount === 1) {
     return null;
   }
 
   return (
-    <Pagination className="w-full flex mt-10 mr-0 ml-auto justify-end">
+    <Pagination className="w-full flex mr-0 ml-auto justify-end">
       <PaginationContent>
         {currentPage > 1 ? (
           <PaginationItem>
-            <PaginationPrevious href={`/movies?page=${currentPage - 1}`} />
+            <PaginationPrevious href={prevPageHref} />
           </PaginationItem>
         ) : null}
 
         {currentPage - 1 > 0 ? (
           <PaginationItem>
-            <PaginationLink href={`/movies?page=${currentPage - 1}`}>
-              {currentPage - 1}
-            </PaginationLink>
+            <PaginationLink href={prevPageHref}>{currentPage - 1}</PaginationLink>
           </PaginationItem>
         ) : null}
 
         {currentPage ? (
           <PaginationItem>
-            <PaginationLink href={`/movies?page=${currentPage}`} isActive>
+            <PaginationLink href={currentPageHref} isActive>
               {currentPage}
             </PaginationLink>
           </PaginationItem>
@@ -46,15 +57,13 @@ const MoviesPagination = ({ currentPage, pageCount }: MoviesPaginationProps) => 
 
         {pageCount >= currentPage + 1 ? (
           <PaginationItem>
-            <PaginationLink href={`/movies?page=${currentPage + 1}`}>
-              {currentPage + 1}
-            </PaginationLink>
+            <PaginationLink href={nextPageHref}>{currentPage + 1}</PaginationLink>
           </PaginationItem>
         ) : null}
 
         {pageCount > currentPage ? (
           <PaginationItem>
-            <PaginationNext href={`/movies?page=${currentPage + 1}`} />
+            <PaginationNext href={nextPageHref} />
           </PaginationItem>
         ) : null}
       </PaginationContent>

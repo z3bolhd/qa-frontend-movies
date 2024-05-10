@@ -1,9 +1,10 @@
 import { getMovies } from "@lib/api";
 import { GetMoviesParams } from "@lib/types";
 
-import MovieCard from "@app/_components/MovieCard";
 import MoviesPagination from "./_components/MoviesPagination";
 import { Metadata } from "next";
+import Filters from "./_components/Filters";
+import MoviesList from "./_components/MoviesList";
 
 export const metadata: Metadata = {
   title: "Все фильмы | Cinescope",
@@ -11,26 +12,19 @@ export const metadata: Metadata = {
 };
 
 const Page = async ({ searchParams }: { searchParams?: GetMoviesParams }) => {
-  const data = await getMovies({ ...searchParams, pageSize: 9, createdAt: "desc" });
-
-  if (!data) {
-    return null;
-  }
-
-  const { movies, page, pageCount } = data;
-
-  if (!movies || movies.length === 0) {
-    return null;
-  }
+  const data = await getMovies({ pageSize: 9, createdAt: "desc", ...searchParams });
 
   return (
     <main className="py-10">
-      <div className="grid grid-cols-3 gap-10">
-        {movies.map((movie) => (
-          <MovieCard {...movie} key={movie.id} />
-        ))}
-      </div>
-      <MoviesPagination currentPage={page || "1"} pageCount={pageCount} />
+      <Filters />
+      {!data || data.movies.length === 0 ? (
+        <div className="mt-56 min-h-full w-full flex justify-center text-xl">Ничего не найдено</div>
+      ) : (
+        <>
+          <MoviesList movies={data.movies} />
+          <MoviesPagination currentPage={data.page || "1"} pageCount={data.pageCount} />
+        </>
+      )}
     </main>
   );
 };
