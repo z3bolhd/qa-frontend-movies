@@ -306,7 +306,7 @@ export const patchUser = async (
 };
 
 export const createUser = async (
-  data: Pick<User, "fullName" | "email" | "verified" | "banned"> & { password: string },
+  data: { password: string } & Pick<User, "fullName" | "email" | "verified" | "banned">,
   accessToken: string,
 ) => {
   const url = BACKEND_URL_AUTH + "/user/";

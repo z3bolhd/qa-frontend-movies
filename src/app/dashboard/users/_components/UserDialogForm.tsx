@@ -151,6 +151,7 @@ const UserDialogForm = ({
                   defaultChecked={field.value}
                   onCheckedChange={() => field.onChange(!field.value)}
                   {...register("verified")}
+                  disabled={user?.roles.includes(Role.SUPER_ADMIN) && user.verified}
                 />
 
                 <Label htmlFor="verified" className="ml-2">
@@ -176,6 +177,7 @@ const UserDialogForm = ({
                   defaultChecked={field.value}
                   onCheckedChange={() => field.onChange(!field.value)}
                   {...register("banned")}
+                  disabled={user?.roles.includes(Role.SUPER_ADMIN)}
                 />
 
                 <Label htmlFor="banned" className="ml-2">

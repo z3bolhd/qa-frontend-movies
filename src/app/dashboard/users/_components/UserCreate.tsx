@@ -1,7 +1,5 @@
 "use client";
 
-import { UsersDataContext } from "@context/UsersDataContext";
-import { useContext, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { UserFormSchema, userFormSchema } from "./UserFormSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,29 +9,27 @@ import { Button } from "@components/ui/button";
 import UserDialogForm from "./UserDialogForm";
 import { createUser } from "@lib/api";
 import toast from "react-hot-toast";
+import { useMutation, useQueryClient } from "react-query";
 
 const UserCreate = () => {
-  const [isLoading, setIsLoading] = useState(false);
-
-  const { fetchUsers } = useContext(UsersDataContext);
-
   const form = useForm<UserFormSchema>({
     resolver: zodResolver(userFormSchema),
   });
 
   const { accessToken } = getUserSession();
+  const queryClient = useQueryClient();
+  const { mutateAsync, isLoading } = useMutation({
+    mutationFn: (data: UserFormSchema) =>
+      createUser({ ...data, password: data.password! }, accessToken!),
+  });
 
   const onSubmit: SubmitHandler<UserFormSchema> = async (data) => {
-    setIsLoading(true);
-
-    const status = await createUser({ ...data, password: data.password! }, accessToken!);
-
-    setIsLoading(false);
+    const status = await mutateAsync(data);
 
     if (status === 201) {
       toast.success("Пользователь успешно создан");
       document.getElementById("closeDialog")?.click();
-      fetchUsers();
+      queryClient.refetchQueries(["users"]);
       return;
     }
 

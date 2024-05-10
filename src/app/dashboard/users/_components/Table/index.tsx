@@ -1,6 +1,5 @@
 "use client";
 
-import { UsersDataContext } from "@context/UsersDataContext";
 import {
   flexRender,
   getCoreRowModel,
@@ -8,7 +7,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { useContext } from "react";
+import { Dispatch, SetStateAction } from "react";
 import columns from "./columns";
 import {
   Table,
@@ -19,28 +18,36 @@ import {
   TableRow,
 } from "@components/ui/table";
 import { Button } from "@components/ui/button";
-import LoadingSpinner from "@components/LoadingSpinner";
 
-const UsersTable = () => {
-  const { users, currentPage, setCurrentPage, pageCount, isLoading } = useContext(UsersDataContext);
+import { GetUsersParams, GetUsersResponse } from "@lib/types";
 
-  if (isLoading) {
-    return (
-      <div className="mt-36">
-        <LoadingSpinner size={50} />
-      </div>
-    );
+interface UsersTableProps {
+  usersResponse: GetUsersResponse | null;
+  setFilters: Dispatch<SetStateAction<GetUsersParams>>;
+}
+
+const UsersTable = ({ usersResponse, setFilters }: UsersTableProps) => {
+  if (!usersResponse) {
+    return null;
   }
 
   const table = useReactTable({
-    data: users,
+    data: usersResponse.users,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    pageCount: pageCount,
-    rowCount: users.length,
+    pageCount: usersResponse.pageCount,
+    rowCount: usersResponse.users.length,
   });
+
+  const handleNextPage = () => {
+    setFilters((prev) => ({ ...prev, page: usersResponse.page + 1 }));
+  };
+
+  const handlePreviousPage = () => {
+    setFilters((prev) => ({ ...prev, page: usersResponse.page - 1 }));
+  };
 
   return (
     <>
@@ -83,27 +90,27 @@ const UsersTable = () => {
           </TableBody>
         </Table>
       </div>
-      {users.length ? (
+      {usersResponse.users.length ? (
         <div className="flex items-center justify-end space-x-2 py-4">
           <div className="text-black">
             <p className="text-sm">
-              Страница {currentPage} из {pageCount}
+              Страница {usersResponse.page} из {usersResponse.pageCount}
             </p>
           </div>
           <div className="space-x-2">
             <Button
               variant="outline"
               className="text-black"
-              onClick={() => setCurrentPage((prev) => prev - 1)}
-              disabled={currentPage === 1}
+              onClick={handlePreviousPage}
+              disabled={usersResponse.page === 1}
             >
               Назад
             </Button>
             <Button
               variant="outline"
               className="text-black"
-              onClick={() => setCurrentPage((prev) => prev + 1)}
-              disabled={currentPage === pageCount}
+              onClick={handleNextPage}
+              disabled={usersResponse.page === usersResponse.pageCount}
             >
               Вперед
             </Button>

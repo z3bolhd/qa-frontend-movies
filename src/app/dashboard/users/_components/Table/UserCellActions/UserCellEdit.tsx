@@ -1,7 +1,6 @@
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
-import { useContext, useState } from "react";
 
 import { User } from "@lib/types";
 import { patchUser } from "@lib/api";
@@ -9,32 +8,28 @@ import { getUserSession } from "@hooks/getUserSession";
 
 import { UserFormSchema, userFormSchema } from "../../UserFormSchema";
 import UserDialogForm from "../../UserDialogForm";
-import { UsersDataContext } from "@context/UsersDataContext";
 
-interface UserCellEditProps extends User {}
+import { useMutation, useQueryClient } from "react-query";
 
-const UserCellEdit = (user: UserCellEditProps) => {
-  const [isLoading, setIsLoading] = useState(false);
-
-  const { fetchUsers } = useContext(UsersDataContext);
-
+const UserCellEdit = (user: User) => {
   const form = useForm<UserFormSchema>({
     resolver: zodResolver(userFormSchema),
   });
 
   const { accessToken } = getUserSession();
 
-  const onSubmit: SubmitHandler<UserFormSchema> = async (data) => {
-    setIsLoading(true);
-    const userId = user.id;
-    const status = await patchUser({ ...data, id: userId }, accessToken!);
+  const queryClient = useQueryClient();
+  const { mutateAsync, isLoading } = useMutation((data: UserFormSchema) =>
+    patchUser({ ...data, id: user.id }, accessToken!),
+  );
 
-    setIsLoading(false);
+  const onSubmit: SubmitHandler<UserFormSchema> = async (data) => {
+    const status = await mutateAsync(data);
 
     if (status == 200) {
       toast.success("Данные пользователя изменены");
       document.getElementById("closeDialog")?.click();
-      fetchUsers();
+      queryClient.refetchQueries(["users"]);
       return;
     }
 
