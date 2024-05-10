@@ -1,5 +1,9 @@
 "use client";
 
+import { useMutation, useQueryClient } from "react-query";
+import toast from "react-hot-toast";
+import { SubmitHandler, useForm } from "react-hook-form";
+
 import { Button } from "@components/ui/button";
 import {
   Dialog,
@@ -10,17 +14,14 @@ import {
   DialogHeader,
   DialogTrigger,
 } from "@components/ui/dialog";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { GenreFormSchema, genreFormSchema } from "./GenreFormSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Label } from "@components/ui/label";
 import { Input } from "@components/ui/input";
 import { createGenre } from "@lib/api";
 import { getUserSession } from "@hooks/getUserSession";
-import toast from "react-hot-toast";
-import { useContext, useState } from "react";
-import { GenresDataContext } from "@context/GenresDataContext";
 import LoadingSpinner from "@components/LoadingSpinner";
+
+import { GenreFormSchema, genreFormSchema } from "./GenreFormSchema";
 
 const GenreCreate = () => {
   const {
@@ -28,19 +29,21 @@ const GenreCreate = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<GenreFormSchema>({ resolver: zodResolver(genreFormSchema) });
-  const [isLoading, setIsLoading] = useState(false);
+
   const { accessToken } = getUserSession();
 
-  const { fetchGenres } = useContext(GenresDataContext);
+  const queryClient = useQueryClient();
+
+  const { mutateAsync, isLoading } = useMutation({
+    mutationFn: (name: string) => createGenre(name, accessToken!),
+  });
 
   const onSubmit: SubmitHandler<GenreFormSchema> = async (data) => {
-    setIsLoading(true);
-
-    const status = await createGenre(data.name, accessToken!);
+    const status = await mutateAsync(data.name);
 
     if (status === 201) {
       toast.success("Жанр успешно создан");
-      fetchGenres();
+      queryClient.refetchQueries(["genres"]);
       document.getElementById("closeDialog")?.click();
       return;
     } else if (status === 409) {
@@ -49,8 +52,6 @@ const GenreCreate = () => {
     }
 
     toast.error("Что-то пошло не так");
-
-    setIsLoading(false);
   };
 
   return (

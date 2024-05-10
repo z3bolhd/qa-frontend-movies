@@ -1,31 +1,31 @@
 "use client";
 
+import toast from "react-hot-toast";
+import { useMutation, useQueryClient } from "react-query";
+
 import { Button } from "@components/ui/button";
 import { DialogClose, DialogFooter, DialogHeader } from "@components/ui/dialog";
-import { GenresDataContext } from "@context/GenresDataContext";
 import { getUserSession } from "@hooks/getUserSession";
 import { deleteGenre } from "@lib/api";
 import { Genre } from "@lib/types";
-import { useContext, useState } from "react";
-import toast from "react-hot-toast";
 
-interface GenreCellDeleteProps extends Genre {}
-
-const GenreCellDelete = ({ id, name }: GenreCellDeleteProps) => {
+const GenreCellDelete = ({ id, name }: Genre) => {
   const { accessToken } = getUserSession();
-  const [isLoading, setIsLoading] = useState(false);
-  const { fetchGenres } = useContext(GenresDataContext);
+
+  const queryClient = useQueryClient();
+
+  const { mutateAsync, isLoading } = useMutation({
+    mutationFn: () => deleteGenre(id, accessToken!),
+  });
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    setIsLoading(true);
-    const status = await deleteGenre(id, accessToken!);
-    setIsLoading(false);
+    const status = await mutateAsync();
 
     if (status === 200) {
       toast.success("Жанр успешно удален");
-      fetchGenres();
+      queryClient.refetchQueries(["genres"]);
       document.getElementById("closeDialog")?.click();
       return;
     }

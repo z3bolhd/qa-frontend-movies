@@ -1,6 +1,5 @@
 "use client";
 
-import { GenresDataContext } from "@context/GenresDataContext";
 import {
   flexRender,
   getCoreRowModel,
@@ -8,8 +7,8 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { useContext } from "react";
-import columns from "./columns";
+
+import { Genre } from "@lib/types";
 import {
   Table,
   TableBody,
@@ -18,19 +17,14 @@ import {
   TableHeader,
   TableRow,
 } from "@components/ui/table";
-import LoadingSpinner from "@components/LoadingSpinner";
 
-const GenresTable = () => {
-  const { genres, isLoading } = useContext(GenresDataContext);
+import columns from "./columns";
 
-  if (isLoading) {
-    return (
-      <div className="mt-36">
-        <LoadingSpinner size={50} />
-      </div>
-    );
-  }
+interface GenresTableProps {
+  genres: Genre[];
+}
 
+const GenresTable = ({ genres }: GenresTableProps) => {
   const table = useReactTable({
     data: genres,
     columns,
