@@ -26,7 +26,7 @@ const Reviews = ({ reviews, movieId }: ReviewsProps) => {
   const personalReview = reviews?.find((review) => review.userId === user?.id);
 
   const shownReviews = reviews?.filter((review) => review.userId !== user?.id && !review.hidden);
-  const hiddenReviews = reviews?.filter((review) => review.hidden);
+  const hiddenReviews = reviews?.filter((review) => review.userId !== user?.id && review.hidden);
 
   const handleDelete = async (userId: string) => {
     const status = await deleteReviewByUserId(movieId, userId, accessToken!);
