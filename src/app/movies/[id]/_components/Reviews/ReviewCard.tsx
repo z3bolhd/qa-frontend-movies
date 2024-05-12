@@ -1,59 +1,36 @@
-"use client";
-
 import { Card, CardContent, CardHeader } from "@components/ui/card";
+
 import { Review } from "@lib/types";
+import { cn } from "@lib/utils";
 
 import Rating from "../Rating";
-import ReviewAdminActions from "./ReviewAdminActions";
 
 interface ReviewCardProps extends Review {
-  movieId: number;
-  isAdmin?: boolean;
-  handleHide?: (userId: string) => void;
-  handleDelete?: (userId: string) => void;
+  actions?: React.ReactNode;
 }
 
 const ReviewCard = ({
-  text,
-  rating,
-  user: { fullName },
+  actions,
   userId,
-  handleDelete,
-  handleHide,
-  isAdmin,
+  createdAt,
+  hidden,
+  rating,
+  text,
+  user: { fullName },
 }: ReviewCardProps) => {
-  const handleDeleteReviewAdminAction = async () => {
-    if (handleDelete) {
-      handleDelete(userId);
-    }
-  };
-
-  const handleHideReviewAdminAction = async () => {
-    if (handleHide) {
-      handleHide(userId);
-    }
-  };
-
   return (
-    <li className="w-full list-none">
-      <Card className="w-full">
-        <CardHeader>
-          <div className="w-full flex justify-between">
-            <h4 className="text-xl w-fit">{fullName}</h4>
-            {isAdmin && (
-              <ReviewAdminActions
-                handleDelete={handleDeleteReviewAdminAction}
-                handleHide={handleHideReviewAdminAction}
-              />
-            )}
-          </div>
-        </CardHeader>
-        <CardContent>
-          <p className="overflow-hidden text-ellipsis">{text}</p>
-          <Rating rating={rating} />
-        </CardContent>
-      </Card>
-    </li>
+    <Card className={cn("w-full", hidden && "bg-gray-100")}>
+      <CardHeader>
+        <div className="w-full flex justify-between">
+          <h4 className="text-xl w-fit">{fullName}</h4>
+          {actions}
+        </div>
+      </CardHeader>
+      <CardContent>
+        <p className="overflow-hidden text-ellipsis whitespace-pre-line line-clamp-8">{text}</p>
+        <Rating rating={rating} />
+      </CardContent>
+    </Card>
   );
 };
 

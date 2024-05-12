@@ -7,20 +7,20 @@ import {
   DropdownMenuTrigger,
 } from "@components/ui/dropdown-menu";
 
-interface ReviewAdminActionsProps {
-  handleHide?: () => void;
-  handleDelete?: () => void;
+interface PersonalReviewActionsProps {
+  handleDelete: () => void;
+  handleEdit: () => void;
 }
 
-const ReviewAdminActions = ({ handleHide, handleDelete }: ReviewAdminActionsProps) => {
+const PersonalReviewActions = ({ handleDelete, handleEdit }: PersonalReviewActionsProps) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="w-5">
         <MoreVertical className="h-4 w-4" />
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuItem className="cursor-pointer" onClick={handleHide}>
-          Скрыть
+        <DropdownMenuItem className="cursor-pointer" onClick={handleEdit}>
+          Редактировать
         </DropdownMenuItem>
         <DropdownMenuItem className="cursor-pointer" onClick={handleDelete}>
           Удалить
@@ -30,4 +30,4 @@ const ReviewAdminActions = ({ handleHide, handleDelete }: ReviewAdminActionsProp
   );
 };
 
-export default ReviewAdminActions;
+export default PersonalReviewActions;

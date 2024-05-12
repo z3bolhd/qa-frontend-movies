@@ -4,8 +4,9 @@ import { Metadata } from "next";
 
 import { getMovieById } from "@lib/api";
 import Rating from "./_components/Rating";
-import Reviews from "./_components/Reviews";
+
 import BuyTicketButton from "./_components/BuyTicketButton";
+import Reviews from "./_components/Reviews";
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
   const movie = await getMovieById(params.id);

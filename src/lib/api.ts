@@ -181,6 +181,38 @@ export const deleteReview = async (movieId: number, accessToken: string) => {
   return status;
 };
 
+export const hideReviewByUserId = async (movieId: number, userId: string, accessToken: string) => {
+  const url = BACKEND_URL_MOVIES + "/movies/" + movieId + "/reviews/hide/" + userId;
+
+  const status = await fetch(url, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+  })
+    .then((res) => res.status)
+    .catch((err) => err.status);
+
+  return status;
+};
+
+export const showReviewByUserId = async (movieId: number, userId: string, accessToken: string) => {
+  const url = BACKEND_URL_MOVIES + "/movies/" + movieId + "/reviews/show/" + userId;
+
+  const status = await fetch(url, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+  })
+    .then((res) => res.status)
+    .catch((err) => err.status);
+
+  return status;
+};
+
 export const deleteReviewByUserId = async (
   movieId: number,
   userId: string,

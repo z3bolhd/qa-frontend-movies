@@ -24,6 +24,7 @@ export type Review = {
   text: string;
   rating: number;
   createdAt: Date;
+  hidden: boolean;
   user: Pick<User, "fullName">;
 };
 
