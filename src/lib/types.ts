@@ -19,6 +19,26 @@ export type User = {
   createdAt?: Date;
 };
 
+export enum AuthStatus {
+  OK = "ok",
+  ERROR = "error",
+}
+
+export type SignInRequest = {
+  email: string;
+  password: string;
+};
+
+export type SignInResponse = {
+  status: AuthStatus;
+};
+
+export type AuthResponse = {
+  accessToken: string;
+  expiresIn: number;
+  user: User;
+};
+
 export type Review = {
   userId: string;
   text: string;

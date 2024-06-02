@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Rubik } from "next/font/google";
 
 import AuthProvider from "@context/AuthProvider";
-import { AuthContext } from "@context/AuthContext";
 import ToasterContext from "@context/ToasterContext";
 
 import Header from "./_components/Header";
@@ -25,10 +24,8 @@ export default function RootLayout({
       <body className={rubik.className}>
         <ToasterContext />
         <AuthProvider>
-          <AuthContext>
-            <Header />
-            <div className="w-full min-h-full max-w-[1200px] mx-auto px-10">{children}</div>
-          </AuthContext>
+          <Header />
+          <div className="w-full min-h-full max-w-[1200px] mx-auto px-10">{children}</div>
         </AuthProvider>
       </body>
     </html>
