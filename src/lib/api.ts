@@ -1,5 +1,8 @@
+import { AxiosError, AxiosInstance, AxiosResponse } from "axios";
 import queryString from "query-string";
-import { BACKEND_URL_AUTH, BACKEND_URL_MOVIES, BACKEND_URL_PAYMENT } from "./consts";
+
+import { AuthClient, MoviesClient, PaymentClient } from "@/clients";
+
 import {
   Genre,
   Movie,
@@ -14,86 +17,47 @@ import {
   Payment,
 } from "./types";
 
-export const fetchData = async <T>(url: string, cache = true): Promise<T | null> => {
-  const response = await fetch(url, {
-    cache: cache ? "default" : "no-store",
-  })
-    .then((res) => {
-      if (!res.ok) {
-        return null;
-      }
+type HTTPMethod = "get" | "post" | "put" | "delete" | "patch";
 
-      return {
-        data: res.json(),
-        status: res.status,
-      };
-    })
-    .catch(() => null);
-
-  return (await response?.data) ?? null;
+export const fetchData = async <T>(
+  client: AxiosInstance,
+  method: HTTPMethod = "get",
+  url: string,
+  body?: any,
+): Promise<AxiosResponse<T, any> | { data: null; status: number | undefined }> => {
+  return await client[method]<T>(url, body).catch((err: AxiosError) => ({
+    data: null,
+    status: err.status,
+  }));
 };
 
 export const getMovies = async (params: GetMoviesParams = {}) => {
-  const url =
-    BACKEND_URL_MOVIES + "/movies" + "?" + queryString.stringify(params, { skipNull: true });
-  return await fetchData<GetMoviesResponse>(url, false);
+  return await fetchData<GetMoviesResponse>(
+    MoviesClient,
+    "get",
+    "/movies" + "?" + queryString.stringify(params, { skipNull: true }),
+    params,
+  );
 };
 
 export const getMovieById = async (id: string) => {
-  const url = BACKEND_URL_MOVIES + "/movies/" + id;
-
-  return await fetchData<
-    Movie & {
-      reviews: Review[];
-    }
-  >(url, false);
+  return await fetchData<Movie & { reviews: Review[] }>(MoviesClient, "get", "/movies/" + id);
 };
 
 export const getGenreById = async (id: number) => {
-  const url = BACKEND_URL_MOVIES + "/genres/" + id;
-
-  return await fetchData<Genre>(url, false);
+  return await fetchData<Genre>(MoviesClient, "get", "/genres/" + id);
 };
 
 export const getGenres = async () => {
-  const url = BACKEND_URL_MOVIES + "/genres/";
-
-  return await fetchData<Genre[]>(url, false);
+  return await fetchData<Genre[]>(MoviesClient, "get", "/genres");
 };
 
-export const deleteGenre = async (id: number, accessToken: string) => {
-  const url = BACKEND_URL_MOVIES + "/genres/" + id;
-
-  const status = await fetch(url, {
-    method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${accessToken}`,
-    },
-  })
-    .then((res) => res.status)
-    .catch((err) => err.status);
-
-  return status;
+export const deleteGenre = async (id: number) => {
+  return await fetchData<Genre>(MoviesClient, "delete", "/genres/" + id);
 };
 
-export const createGenre = async (name: string, accessToken: string) => {
-  const url = BACKEND_URL_MOVIES + "/genres";
-
-  const stringifiedUser = JSON.stringify({ name });
-
-  const status = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${accessToken}`,
-    },
-    body: stringifiedUser,
-  })
-    .then((res) => res.status)
-    .catch((err) => err.status);
-
-  return status;
+export const createGenre = async (name: string) => {
+  return await fetchData<Genre>(MoviesClient, "post", "/genres", { name });
 };
 
 export const registerUser = async (user: {
@@ -102,330 +66,95 @@ export const registerUser = async (user: {
   password: string;
   passwordRepeat: string;
 }) => {
-  const url = BACKEND_URL_AUTH + "/register";
-
-  const stringifiedUser = JSON.stringify({ ...user });
-
-  const status = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: stringifiedUser,
-  })
-    .then((res) => res.status)
-    .catch((err) => err.status);
-
-  return status;
+  return await fetchData<User>(AuthClient, "post", "/register", user);
 };
 
-export const createReview = async (
-  movieId: number,
-  review: Pick<Review, "text" | "rating">,
-  accessToken: string,
-) => {
-  const url = BACKEND_URL_MOVIES + "/movies/" + movieId + "/reviews/";
-
-  const stringifiedReview = JSON.stringify({ ...review });
-
-  const status = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${accessToken}`,
-    },
-    body: stringifiedReview,
-  })
-    .then((res) => res.status)
-    .catch((err) => err.status);
-
-  return status;
+export const createReview = async (movieId: number, review: Pick<Review, "text" | "rating">) => {
+  return await fetchData<Review>(MoviesClient, "post", "/movies/" + movieId + "/reviews", review);
 };
 
-export const editReview = async (
-  movieId: number,
-  review: Pick<Review, "text" | "rating">,
-  accessToken: string,
-) => {
-  const url = BACKEND_URL_MOVIES + "/movies/" + movieId + "/reviews/";
-
-  const stringifiedReview = JSON.stringify({ ...review });
-
-  const status = await fetch(url, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${accessToken}`,
-    },
-    body: stringifiedReview,
-  })
-    .then((res) => res.status)
-    .catch((err) => err.status);
-
-  return status;
+export const editReview = async (movieId: number, review: Pick<Review, "text" | "rating">) => {
+  return await fetchData<Review>(MoviesClient, "put", "/movies/" + movieId + "/reviews", review);
 };
 
-export const deleteReview = async (movieId: number, accessToken: string) => {
-  const url = BACKEND_URL_MOVIES + "/movies/" + movieId + "/reviews/";
-
-  const status = await fetch(url, {
-    method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${accessToken}`,
-    },
-  })
-    .then((res) => res.status)
-    .catch((err) => err.status);
-
-  return status;
+export const deleteReview = async (movieId: number) => {
+  return await fetchData<Review>(MoviesClient, "delete", "/movies/" + movieId + "/reviews");
 };
 
-export const hideReviewByUserId = async (movieId: number, userId: string, accessToken: string) => {
-  const url = BACKEND_URL_MOVIES + "/movies/" + movieId + "/reviews/hide/" + userId;
-
-  const status = await fetch(url, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${accessToken}`,
-    },
-  })
-    .then((res) => res.status)
-    .catch((err) => err.status);
-
-  return status;
+export const hideReviewByUserId = async (movieId: number, userId: string) => {
+  return await fetchData<Review>(
+    MoviesClient,
+    "patch",
+    "/movies/" + movieId + "/reviews/hide/" + userId,
+  );
 };
 
-export const showReviewByUserId = async (movieId: number, userId: string, accessToken: string) => {
-  const url = BACKEND_URL_MOVIES + "/movies/" + movieId + "/reviews/show/" + userId;
-
-  const status = await fetch(url, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${accessToken}`,
-    },
-  })
-    .then((res) => res.status)
-    .catch((err) => err.status);
-
-  return status;
+export const showReviewByUserId = async (movieId: number, userId: string) => {
+  return await fetchData<Review>(
+    MoviesClient,
+    "patch",
+    "/movies/" + movieId + "/reviews/show/" + userId,
+  );
 };
 
-export const deleteReviewByUserId = async (
-  movieId: number,
-  userId: string,
-  accessToken: string,
-) => {
-  const url = BACKEND_URL_MOVIES + "/movies/" + movieId + "/reviews?userId=" + userId;
-
-  const status = await fetch(url, {
-    method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${accessToken}`,
-    },
-  })
-    .then((res) => res.status)
-    .catch((err) => err.status);
-
-  return status;
+export const deleteReviewByUserId = async (movieId: number, userId: string) => {
+  return await fetchData<Review>(
+    MoviesClient,
+    "delete",
+    "/movies/" + movieId + "/reviews/" + userId,
+  );
 };
 
 export const patchMovie = async (
-  data: Omit<Movie, "reviews" | "createdAt" | "rating" | "genre">,
-  accessToken: string,
+  movie: Omit<Movie, "reviews" | "createdAt" | "rating" | "genre">,
 ) => {
-  const url = BACKEND_URL_MOVIES + "/movies/" + data.id;
-
-  const stringifiedData = JSON.stringify({ ...data });
-
-  const status = await fetch(url, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${accessToken}`,
-    },
-    body: stringifiedData,
-  })
-    .then((res) => res.status)
-    .catch((err) => err.status);
-
-  return status;
+  return await fetchData<Movie>(MoviesClient, "patch", "/movies/" + movie.id, movie);
 };
 
-export const deleteMovie = async (id: number, accessToken: string) => {
-  const url = BACKEND_URL_MOVIES + "/movies/" + id;
-
-  const status: number = await fetch(url, {
-    method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${accessToken}`,
-    },
-  })
-    .then((res) => res.status)
-    .catch((err) => err.status);
-
-  return status;
+export const deleteMovie = async (id: number) => {
+  return await fetchData<Movie>(MoviesClient, "delete", "/movies/" + id);
 };
 
 export const createMovie = async (
-  data: Omit<Movie, "id" | "reviews" | "createdAt" | "rating" | "genre">,
-  accessToken: string,
+  movie: Omit<Movie, "id" | "reviews" | "createdAt" | "rating" | "genre">,
 ) => {
-  const url = BACKEND_URL_MOVIES + "/movies";
-
-  const stringifiedData = JSON.stringify({ ...data });
-
-  const status = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${accessToken}`,
-    },
-    body: stringifiedData,
-  })
-    .then((res) => res.status)
-    .catch((err) => err.status);
-
-  return status;
+  return await fetchData<Movie>(MoviesClient, "post", "/movies", movie);
 };
 
-export const getUsers = async (params: GetUsersParams = {}, accessToken: string) => {
-  const url = BACKEND_URL_AUTH + "/user" + "?" + queryString.stringify(params, { skipNull: true });
-
-  const users: GetUsersResponse | null = await fetch(url, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${accessToken}`,
-    },
-  })
-    .then((res) => {
-      if (!res.ok) {
-        return null;
-      }
-
-      return res.json();
-    })
-    .catch(() => null);
-
-  return users;
+export const getUsers = async (params: GetUsersParams = {}) => {
+  return await fetchData<GetUsersResponse>(
+    AuthClient,
+    "get",
+    "/user" + "?" + queryString.stringify(params, { skipNull: true }),
+  );
 };
 
-export const patchUser = async (
-  data: Pick<User, "id" | "verified" | "roles" | "banned">,
-  accessToken: string,
-) => {
-  const url = BACKEND_URL_AUTH + "/user/" + data.id;
-
-  const stringifiedData = JSON.stringify({ ...data });
-
-  const status = await fetch(url, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${accessToken}`,
-    },
-    body: stringifiedData,
-  })
-    .then((res) => res.status)
-    .catch((err) => err.status);
-
-  return status;
+export const patchUser = async (user: Pick<User, "id" | "verified" | "roles" | "banned">) => {
+  return await fetchData<User>(AuthClient, "patch", "/user/" + user.id, user);
 };
 
 export const createUser = async (
-  data: { password: string } & Pick<User, "fullName" | "email" | "verified" | "banned">,
-  accessToken: string,
+  user: { password: string } & Pick<User, "fullName" | "email" | "verified" | "banned">,
 ) => {
-  const url = BACKEND_URL_AUTH + "/user/";
-
-  const stringifiedData = JSON.stringify({ ...data });
-
-  const status = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${accessToken}`,
-    },
-    body: stringifiedData,
-  })
-    .then((res) => res.status)
-    .catch((err) => err.status);
-
-  return status;
+  return await fetchData<User>(AuthClient, "post", "/user", user);
 };
 
-export const createPayment = async (
-  data: {
-    movieId: number;
-    amount: number;
-    card: { cardNumber: string; cardHolder: string; securityCode: number; expirationDate: string };
-  },
-  accessToken: string,
-) => {
-  const url = BACKEND_URL_PAYMENT + "/create";
-
-  const stringifiedData = JSON.stringify({ ...data });
-
-  const status = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${accessToken}`,
-    },
-    body: stringifiedData,
-  })
-    .then((res) => res.status)
-    .catch((err) => err.status);
-
-  return status;
+export const createPayment = async (payment: {
+  movieId: number;
+  amount: number;
+  card: { cardNumber: string; cardHolder: string; securityCode: number; expirationDate: string };
+}) => {
+  return await fetchData<Payment>(PaymentClient, "post", "/payment", payment);
 };
 
-export const getPayments = async (params: GetPaymentsParams, accessToken: string) => {
-  const url =
-    BACKEND_URL_PAYMENT + "/find-all" + "?" + queryString.stringify(params, { skipNull: true });
-
-  const payments: GetPaymentsResponse | null = await fetch(url, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${accessToken}`,
-    },
-  })
-    .then((res) => {
-      if (!res.ok) {
-        return null;
-      }
-
-      return res.json();
-    })
-    .catch(() => null);
-
-  return payments;
+export const getPayments = async (params: GetPaymentsParams) => {
+  return await fetchData<GetPaymentsResponse>(
+    PaymentClient,
+    "get",
+    "/payment" + "?" + queryString.stringify(params, { skipNull: true }),
+  );
 };
 
-export const getUserPayments = async (accessToken: string) => {
-  const url = BACKEND_URL_PAYMENT + "/user";
-
-  const payments: Payment[] | null = await fetch(url, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${accessToken}`,
-    },
-  })
-    .then((res) => {
-      if (!res.ok) {
-        return null;
-      }
-
-      return res.json();
-    })
-    .catch(() => null);
-
-  return payments;
+export const getUserPayments = async () => {
+  return await fetchData<Payment[]>(PaymentClient, "get", "/payment/user");
 };
