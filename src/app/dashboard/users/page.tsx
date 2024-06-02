@@ -2,7 +2,7 @@
 
 import UsersTable from "./_components/Table";
 import UserCreate from "./_components/UserCreate";
-import { getUserSession } from "@hooks/getUserSession";
+
 import { useQuery } from "react-query";
 import { getUsers } from "@lib/api";
 import { useState } from "react";
@@ -10,20 +10,20 @@ import { GetUsersParams } from "@lib/types";
 import LoadingSpinner from "@components/LoadingSpinner";
 
 const DashboardUsersPage = () => {
-  const { accessToken } = getUserSession();
   const [userFilters, setUserFilters] = useState<GetUsersParams>({
     createdAt: "desc",
   });
 
-  const { data, isLoading, error, status } = useQuery(
-    ["users", userFilters],
-    () => getUsers(userFilters, accessToken!),
-    {
-      enabled: !!accessToken,
-    },
+  const { data, isLoading, error, status } = useQuery(["users", userFilters], () =>
+    getUsers(userFilters),
   );
 
-  if ((error || !data) && !isLoading && status === "success") {
+  const usersResponse = data?.data;
+
+  if (
+    ((error || !data?.status) && !isLoading && status === "success" && data?.status !== 200) ||
+    !usersResponse
+  ) {
     return <p className="text-xl mt-36">Что-то пошло не так</p>;
   }
 
@@ -38,7 +38,7 @@ const DashboardUsersPage = () => {
           <LoadingSpinner size={50} />
         </div>
       ) : (
-        <UsersTable usersResponse={data!} setFilters={setUserFilters} />
+        <UsersTable usersResponse={usersResponse} setFilters={setUserFilters} />
       )}
     </div>
   );

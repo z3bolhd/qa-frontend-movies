@@ -23,9 +23,9 @@ import {
 } from "@components/ui/select";
 
 import { Role, User } from "@lib/types";
-import { getUserSession } from "@hooks/getUserSession";
 
 import { UserFormSchema } from "./UserFormSchema";
+import useSession from "@hooks/useSession";
 
 interface UserDialogFormProps {
   title: string;
@@ -54,9 +54,9 @@ const UserDialogForm = ({
   control,
   isLoading,
 }: UserDialogFormProps) => {
-  const userSession = getUserSession();
+  const { session } = useSession();
   const roles = Object.values(Role);
-  const inputRoles = userSession!.user!.roles.includes(Role.SUPER_ADMIN)
+  const inputRoles = session?.roles.includes(Role.SUPER_ADMIN)
     ? roles
     : roles.filter((role) => role !== Role.SUPER_ADMIN);
 

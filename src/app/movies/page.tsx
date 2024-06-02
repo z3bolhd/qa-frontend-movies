@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 };
 
 const Page = async ({ searchParams }: { searchParams?: GetMoviesParams }) => {
-  const data = await getMovies({ pageSize: 9, createdAt: "desc", ...searchParams });
+  const { data } = await getMovies({ pageSize: 9, createdAt: "desc", ...searchParams });
 
   return (
     <main className="py-10">

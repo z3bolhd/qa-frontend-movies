@@ -23,7 +23,7 @@ const GenresFilter = () => {
 
   useEffect(() => {
     const fetchGenres = async () => {
-      const genres = await getGenres();
+      const { data: genres } = await getGenres();
       if (!genres) {
         return;
       }

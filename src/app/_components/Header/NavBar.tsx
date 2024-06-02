@@ -1,13 +1,14 @@
 "use client";
 
+import useSession from "@hooks/useSession";
+import { Role } from "@lib/types";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import { getIsAdmin } from "@hooks/getIsAdmin";
-
 const NavBar = () => {
   const pathname = usePathname();
-  const isAdmin = getIsAdmin();
+  const { session } = useSession();
+  const isAdmin = session?.roles.includes(Role.ADMIN);
   const isDashboardPage = pathname.includes("/dashboard");
   const isProfilePage = pathname.includes("/profile");
 

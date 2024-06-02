@@ -1,10 +1,7 @@
 "use client";
 
-import { Card, CardContent, CardHeader } from "@components/ui/card";
 import { Review } from "@lib/types";
-import Rating from "../../Rating";
 import PersonalReviewActions from "./PersonalReviewActions";
-import { getUserSession } from "@hooks/getUserSession";
 import Link from "next/link";
 import { useState } from "react";
 import ReviewCard from "../ReviewCard";
@@ -12,6 +9,7 @@ import ReviewForm from "./ReviewForm";
 import { deleteReview } from "@lib/api";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import useSession from "@hooks/useSession";
 
 interface PersonalReviewProps {
   review?: Review;
@@ -21,9 +19,9 @@ interface PersonalReviewProps {
 const PersonalReview = ({ review, movieId }: PersonalReviewProps) => {
   const [isFormOpen, setIsFormOpen] = useState(false);
 
-  const router = useRouter();
+  const { session } = useSession();
 
-  const { accessToken } = getUserSession();
+  const router = useRouter();
 
   const openForm = () => {
     setIsFormOpen(true);
@@ -34,7 +32,7 @@ const PersonalReview = ({ review, movieId }: PersonalReviewProps) => {
   };
 
   const handleDelete = async () => {
-    const status = await deleteReview(movieId, accessToken!);
+    const { status } = await deleteReview(movieId);
 
     if (status !== 200) {
       toast.error("Произошла ошибка");
@@ -45,7 +43,7 @@ const PersonalReview = ({ review, movieId }: PersonalReviewProps) => {
     router.refresh();
   };
 
-  if (!accessToken) {
+  if (!session) {
     return (
       <p className="mt-5 text-xl">
         <Link className="underline" href="/login">

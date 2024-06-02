@@ -5,8 +5,6 @@ import { useQuery } from "react-query";
 
 import { GetPaymentsParams } from "@lib/types";
 import PaymentsTable from "./_components/Table";
-
-import { getUserSession } from "@hooks/getUserSession";
 import { getPayments } from "@lib/api";
 import LoadingSpinner from "@components/LoadingSpinner";
 
@@ -15,15 +13,15 @@ const PaymentsPage = () => {
     createdAt: "desc",
   });
 
-  const { accessToken } = getUserSession();
-
-  const { data, isLoading } = useQuery(
-    ["payments", paymentFilters],
-    () => getPayments(paymentFilters, accessToken!),
-    {
-      enabled: !!accessToken,
-    },
+  const { data, isLoading } = useQuery(["payments", paymentFilters], () =>
+    getPayments(paymentFilters),
   );
+
+  const paymentsResponse = data?.data;
+
+  if (data?.status !== 200 || !paymentsResponse) {
+    return <p className="text-xl mt-36">Что-то пошло не так</p>;
+  }
 
   return (
     <div>
@@ -36,10 +34,9 @@ const PaymentsPage = () => {
           <LoadingSpinner size={50} />
         </div>
       ) : (
-        <PaymentsTable paymentsResponse={data!} setFilters={setPaymentFilters} />
+        <PaymentsTable paymentsResponse={paymentsResponse || []} setFilters={setPaymentFilters} />
       )}
     </div>
-    // </PaymentsDataContextProvider>
   );
 };
 

@@ -9,15 +9,7 @@ interface ReviewCardProps extends Review {
   actions?: React.ReactNode;
 }
 
-const ReviewCard = ({
-  actions,
-  userId,
-  createdAt,
-  hidden,
-  rating,
-  text,
-  user: { fullName },
-}: ReviewCardProps) => {
+const ReviewCard = ({ actions, hidden, rating, text, user: { fullName } }: ReviewCardProps) => {
   return (
     <Card className={cn("w-full", hidden && "bg-gray-100")}>
       <CardHeader>

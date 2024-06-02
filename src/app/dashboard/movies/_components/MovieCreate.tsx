@@ -7,7 +7,6 @@ import toast from "react-hot-toast";
 
 import { createMovie } from "@lib/api";
 import { Dialog, DialogContent, DialogTrigger } from "@components/ui/dialog";
-import { getUserSession } from "@hooks/getUserSession";
 import { Button } from "@components/ui/button";
 
 import MovieDialogForm from "./MovieDialogForm";
@@ -15,16 +14,15 @@ import { MovieFormSchema, movieFormSchema } from "./MovieFormSchema";
 
 const MovieCreate = () => {
   const form = useForm<MovieFormSchema>({ resolver: zodResolver(movieFormSchema) });
-  const { accessToken } = getUserSession();
 
   const queryClient = useQueryClient();
 
   const { mutateAsync, isLoading } = useMutation({
-    mutationFn: (data: MovieFormSchema) => createMovie(data, accessToken!),
+    mutationFn: (data: MovieFormSchema) => createMovie(data),
   });
 
   const onSubmit: SubmitHandler<MovieFormSchema> = async (data) => {
-    const status = await mutateAsync(data);
+    const { status } = await mutateAsync(data);
 
     if (status === 201) {
       toast.success("Фильм успешно добавлен");

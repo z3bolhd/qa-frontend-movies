@@ -9,7 +9,7 @@ import BuyTicketButton from "./_components/BuyTicketButton";
 import Reviews from "./_components/Reviews";
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
-  const movie = await getMovieById(params.id);
+  const { data: movie } = await getMovieById(params.id);
 
   return {
     title: movie?.name + " | Cinescope",
@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
 }
 
 const MoviePage = async ({ params }: { params: { id: string } }) => {
-  const movie = await getMovieById(params.id);
+  const { data: movie } = await getMovieById(params.id);
 
   if (!movie) {
     notFound();

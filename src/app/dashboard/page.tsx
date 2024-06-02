@@ -1,24 +1,18 @@
-import { getServerSession } from "next-auth";
+"use client";
+
 import { redirect } from "next/navigation";
 
-import { authOptions } from "@app/api/auth/[...nextauth]/options";
 import { Role } from "@lib/types";
-
-export const metadata = {
-  title: {
-    default: "Админ панель | Cinescope",
-  },
-  // description: "Админ панель",
-};
+import useSession from "@hooks/useSession";
 
 const DashboardPage = async () => {
-  const session = await getServerSession(authOptions);
+  const { session } = useSession();
 
-  if (!session?.user) {
+  const isAdmin = session?.roles.includes(Role.ADMIN);
+
+  if (!session) {
     return redirect("/unauthorized");
   }
-
-  const isAdmin = session.user.roles.includes(Role.ADMIN);
 
   if (!isAdmin) {
     return redirect("/unauthorized");

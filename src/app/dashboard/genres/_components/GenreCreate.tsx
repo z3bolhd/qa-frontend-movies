@@ -18,7 +18,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Label } from "@components/ui/label";
 import { Input } from "@components/ui/input";
 import { createGenre } from "@lib/api";
-import { getUserSession } from "@hooks/getUserSession";
 import LoadingSpinner from "@components/LoadingSpinner";
 
 import { GenreFormSchema, genreFormSchema } from "./GenreFormSchema";
@@ -30,16 +29,14 @@ const GenreCreate = () => {
     formState: { errors },
   } = useForm<GenreFormSchema>({ resolver: zodResolver(genreFormSchema) });
 
-  const { accessToken } = getUserSession();
-
   const queryClient = useQueryClient();
 
   const { mutateAsync, isLoading } = useMutation({
-    mutationFn: (name: string) => createGenre(name, accessToken!),
+    mutationFn: (name: string) => createGenre(name),
   });
 
   const onSubmit: SubmitHandler<GenreFormSchema> = async (data) => {
-    const status = await mutateAsync(data.name);
+    const { status } = await mutateAsync(data.name);
 
     if (status === 201) {
       toast.success("Жанр успешно создан");

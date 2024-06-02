@@ -1,10 +1,10 @@
 "use client";
-import { AuthClient } from "@clients/AuthClient";
-import inMemoryJWT from "@lib/inMemoryJWT";
 import { AuthResponse, AuthStatus, SignInRequest, SignInResponse, User } from "@lib/types";
 import { AxiosError } from "axios";
-import { SessionProvider } from "next-auth/react";
 import { createContext, useCallback, useEffect, useState } from "react";
+
+import { AuthClient } from "@clients/AuthClient";
+import inMemoryJWT from "@lib/inMemoryJWT";
 
 interface AuthContextProps {
   isLogged: boolean;

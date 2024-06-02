@@ -3,7 +3,6 @@ import { useEffect } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
-import { Button } from "@components/ui/button";
 import {
   Select,
   SelectContent,
@@ -11,11 +10,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@components/ui/select";
-import { Textarea } from "@components/ui/textarea";
-import { getUserSession } from "@hooks/getUserSession";
 import { createReview, editReview } from "@lib/api";
 import { Review } from "@lib/types";
 import { cn } from "@lib/utils";
+import { Textarea } from "@components/ui/textarea";
+import { Button } from "@components/ui/button";
 
 interface ReviewFormProps {
   review?: Review;
@@ -29,7 +28,6 @@ interface ReviewInput {
 }
 
 const ReviewForm = ({ movieId, review, closeForm }: ReviewFormProps) => {
-  const { accessToken } = getUserSession();
   const router = useRouter();
 
   const {
@@ -54,14 +52,10 @@ const ReviewForm = ({ movieId, review, closeForm }: ReviewFormProps) => {
 
   const onSubmit: SubmitHandler<ReviewInput> = async (data) => {
     if (review?.text || review?.rating) {
-      const status = await editReview(
-        movieId,
-        {
-          text: data.text,
-          rating: Number(data.rating),
-        },
-        accessToken!,
-      );
+      const { status } = await editReview(movieId, {
+        text: data.text,
+        rating: Number(data.rating),
+      });
 
       if (status !== 200) {
         toast.error("Произошла ошибка");
@@ -70,14 +64,10 @@ const ReviewForm = ({ movieId, review, closeForm }: ReviewFormProps) => {
 
       toast.success("Отзыв успешно обновлен");
     } else {
-      const status = await createReview(
-        movieId,
-        {
-          text: data.text,
-          rating: Number(data.rating),
-        },
-        accessToken!,
-      );
+      const { status } = await createReview(movieId, {
+        text: data.text,
+        rating: Number(data.rating),
+      });
 
       if (status !== 201) {
         toast.error("Произошла ошибка");

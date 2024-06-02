@@ -17,13 +17,15 @@ const DashboardGenresPage = () => {
     );
   }
 
+  const genres = data?.data;
+
   return (
     <div>
       <div className="flex justify-between">
         <h2 className="text-4xl">Жанры</h2>
         <GenreCreate />
       </div>
-      <GenresTable genres={data || []} />
+      <GenresTable genres={genres || []} />
     </div>
   );
 };

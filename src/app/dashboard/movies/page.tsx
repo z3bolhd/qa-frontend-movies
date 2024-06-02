@@ -19,6 +19,8 @@ const DashboardMoviesPage = () => {
     keepPreviousData: true,
   });
 
+  const moviesResponse = data?.data;
+
   return (
     <div>
       <div className="flex justify-between">
@@ -33,7 +35,7 @@ const DashboardMoviesPage = () => {
           <LoadingSpinner size={50} />
         </div>
       ) : (
-        <MoviesTable setFilters={setMovieFilters} moviesResponse={data} />
+        <MoviesTable setFilters={setMovieFilters} moviesResponse={moviesResponse} />
       )}
     </div>
   );

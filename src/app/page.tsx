@@ -6,7 +6,7 @@ import { Button } from "@components/ui/button";
 import MovieCard from "./_components/MovieCard";
 
 const Home = async () => {
-  const data = await getMovies({ createdAt: "desc", page: 1, pageSize: 9 });
+  const { data } = await getMovies({ createdAt: "desc", page: 1, pageSize: 9 });
 
   if (!data) {
     return null;

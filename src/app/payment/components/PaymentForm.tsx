@@ -1,4 +1,6 @@
+import { useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 
 import { Input } from "@components/ui/input";
 import { Label } from "@components/ui/label";
@@ -13,9 +15,6 @@ import {
 import { Button } from "@components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createPayment } from "@lib/api";
-import { getUserSession } from "@hooks/getUserSession";
-import toast from "react-hot-toast";
-import { useState } from "react";
 import LoadingSpinner from "@components/LoadingSpinner";
 
 interface PaymentFormProps {
@@ -34,10 +33,7 @@ const PaymentForm = ({ movieId, price, onSuccess }: PaymentFormProps) => {
   } = useForm<PaymentFormSchema>({
     resolver: zodResolver(paymentFormSchema),
   });
-
   const [isLoading, setIsLoading] = useState(false);
-
-  const { accessToken } = getUserSession();
 
   const total = price * watch("amount") || price;
 
@@ -45,17 +41,14 @@ const PaymentForm = ({ movieId, price, onSuccess }: PaymentFormProps) => {
     setIsLoading(true);
     const expirationDate = data.card.expirationMonth + "/" + data.card.expirationYear;
 
-    const status = await createPayment(
-      {
-        movieId: movieId,
-        amount: data.amount,
-        card: {
-          ...data.card,
-          expirationDate,
-        },
+    const { status } = await createPayment({
+      movieId: movieId,
+      amount: data.amount,
+      card: {
+        ...data.card,
+        expirationDate,
       },
-      accessToken!,
-    );
+    });
 
     switch (status) {
       case 201:

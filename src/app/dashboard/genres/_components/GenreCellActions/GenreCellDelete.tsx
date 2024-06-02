@@ -5,23 +5,20 @@ import { useMutation, useQueryClient } from "react-query";
 
 import { Button } from "@components/ui/button";
 import { DialogClose, DialogFooter, DialogHeader } from "@components/ui/dialog";
-import { getUserSession } from "@hooks/getUserSession";
 import { deleteGenre } from "@lib/api";
 import { Genre } from "@lib/types";
 
 const GenreCellDelete = ({ id, name }: Genre) => {
-  const { accessToken } = getUserSession();
-
   const queryClient = useQueryClient();
 
   const { mutateAsync, isLoading } = useMutation({
-    mutationFn: () => deleteGenre(id, accessToken!),
+    mutationFn: () => deleteGenre(id),
   });
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const status = await mutateAsync();
+    const { status } = await mutateAsync();
 
     if (status === 200) {
       toast.success("Жанр успешно удален");

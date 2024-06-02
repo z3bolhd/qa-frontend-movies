@@ -5,12 +5,13 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { SignInResponse, signIn, useSession } from "next-auth/react";
 
 import { Button } from "@components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@components/ui/card";
 import { Input } from "@components/ui/input";
 import { Label } from "@components/ui/label";
+import useSession from "@hooks/useSession";
+import { AuthStatus, SignInResponse } from "@lib/types";
 
 interface LoginInput {
   email: string;
@@ -18,7 +19,7 @@ interface LoginInput {
 }
 
 const LoginForm = () => {
-  const session = useSession();
+  const { signIn, session, isLogged } = useSession();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const {
@@ -27,27 +28,25 @@ const LoginForm = () => {
     formState: { errors },
   } = useForm<LoginInput>();
 
-  if (session.status === "authenticated") {
-    router.push("/");
-  }
+  const onSubmit: SubmitHandler<LoginInput> = async (data) => {
+    setIsLoading(true);
+    const { status } = await signIn(data);
 
-  const checkCredentials = (callback: SignInResponse) => {
-    if (callback?.error) {
+    if (status === AuthStatus.ERROR) {
       toast.error("Неверная почта или пароль");
     }
 
-    if (callback?.ok && !callback?.error) {
+    if (status === AuthStatus.OK) {
       toast.success("Вы вошли в аккаунт");
       router.push("/");
     }
+
+    setIsLoading(false);
   };
 
-  const onSubmit: SubmitHandler<LoginInput> = (data) => {
-    setIsLoading(true);
-    signIn("credentials", { ...data, redirect: false })
-      .then((callback) => checkCredentials(callback!))
-      .finally(() => setIsLoading(false));
-  };
+  if (isLogged && session) {
+    router.push("/");
+  }
 
   return (
     <Card className="w-[500px] mx-auto">

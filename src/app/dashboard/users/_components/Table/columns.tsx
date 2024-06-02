@@ -1,7 +1,7 @@
 import { Role, User } from "@lib/types";
 import { ColumnDef } from "@tanstack/react-table";
 import UserCellActions from "./UserCellActions";
-import { getIsSuperAdmin } from "@hooks/getIsSuperAdmin";
+import useSession from "@hooks/useSession";
 
 const columns: ColumnDef<User>[] = [
   {
@@ -64,8 +64,8 @@ const columns: ColumnDef<User>[] = [
     id: "actions",
     enableSorting: false,
     cell: ({ row }) => {
-      const isSuperAdmin = getIsSuperAdmin();
-      if (isSuperAdmin) {
+      const { session } = useSession();
+      if (session?.roles.includes(Role.SUPER_ADMIN)) {
         return <UserCellActions row={row} />;
       }
 

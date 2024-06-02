@@ -4,7 +4,6 @@ import toast from "react-hot-toast";
 
 import { User } from "@lib/types";
 import { patchUser } from "@lib/api";
-import { getUserSession } from "@hooks/getUserSession";
 
 import { UserFormSchema, userFormSchema } from "../../UserFormSchema";
 import UserDialogForm from "../../UserDialogForm";
@@ -15,16 +14,13 @@ const UserCellEdit = (user: User) => {
   const form = useForm<UserFormSchema>({
     resolver: zodResolver(userFormSchema),
   });
-
-  const { accessToken } = getUserSession();
-
   const queryClient = useQueryClient();
   const { mutateAsync, isLoading } = useMutation((data: UserFormSchema) =>
-    patchUser({ ...data, id: user.id }, accessToken!),
+    patchUser({ ...data, id: user.id }),
   );
 
   const onSubmit: SubmitHandler<UserFormSchema> = async (data) => {
-    const status = await mutateAsync(data);
+    const { status } = await mutateAsync(data);
 
     if (status == 200) {
       toast.success("Данные пользователя изменены");

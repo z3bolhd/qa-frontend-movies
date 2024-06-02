@@ -1,4 +1,3 @@
-import { getUserSession } from "@hooks/getUserSession";
 import { getUserPayments } from "@lib/api";
 import { Payment } from "@lib/types";
 import { useEffect, useState } from "react";
@@ -7,10 +6,9 @@ import UserPaymentsTable from "./Table";
 const UserPayments = () => {
   const [payments, setPayments] = useState<Payment[]>([]);
   const [isError, setIsError] = useState(false);
-  const { accessToken } = getUserSession();
 
   const fetchPayments = async () => {
-    const payments = await getUserPayments(accessToken!);
+    const { data: payments } = await getUserPayments();
 
     if (!payments) {
       setIsError(true);
@@ -24,7 +22,7 @@ const UserPayments = () => {
 
   useEffect(() => {
     fetchPayments();
-  }, [accessToken]);
+  }, []);
 
   return (
     <div className="my-10">

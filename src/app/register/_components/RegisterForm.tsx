@@ -59,7 +59,7 @@ const RegisterForm = () => {
 
   const onSubmit: SubmitHandler<FormSchema> = async (data) => {
     setIsLoading(true);
-    const status = await registerUser(data);
+    const { status } = await registerUser(data);
 
     if (status === 201) {
       if (NODE_ENV === "production") {

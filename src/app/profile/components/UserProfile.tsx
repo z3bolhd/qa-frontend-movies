@@ -1,12 +1,12 @@
 "use client";
 
-import { getUserSession } from "@hooks/getUserSession";
 import UserPayments from "./UserPayments";
+import useSession from "@hooks/useSession";
 
 const UserProfile = () => {
-  const { user } = getUserSession();
+  const { session } = useSession();
 
-  if (!user) {
+  if (!session) {
     return null;
   }
 
@@ -19,10 +19,10 @@ const UserProfile = () => {
 
         <div className="mt-10 text-xl">
           <ul className="flex flex-col gap-2">
-            <li>ID: {user.id}</li>
-            <li>ФИО: {user.fullName}</li>
-            <li>Email: {user.email}</li>
-            <li>Роли: {user.roles.join(", ")}</li>
+            <li>ID: {session.id}</li>
+            <li>ФИО: {session.fullName}</li>
+            <li>Email: {session.email}</li>
+            <li>Роли: {session.roles.join(", ")}</li>
           </ul>
         </div>
       </div>

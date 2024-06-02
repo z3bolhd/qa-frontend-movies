@@ -3,7 +3,6 @@
 import { SubmitHandler, useForm } from "react-hook-form";
 import { UserFormSchema, userFormSchema } from "./UserFormSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { getUserSession } from "@hooks/getUserSession";
 import { Dialog, DialogContent, DialogTrigger } from "@components/ui/dialog";
 import { Button } from "@components/ui/button";
 import UserDialogForm from "./UserDialogForm";
@@ -16,15 +15,13 @@ const UserCreate = () => {
     resolver: zodResolver(userFormSchema),
   });
 
-  const { accessToken } = getUserSession();
   const queryClient = useQueryClient();
   const { mutateAsync, isLoading } = useMutation({
-    mutationFn: (data: UserFormSchema) =>
-      createUser({ ...data, password: data.password! }, accessToken!),
+    mutationFn: (data: UserFormSchema) => createUser({ ...data, password: data.password! }),
   });
 
   const onSubmit: SubmitHandler<UserFormSchema> = async (data) => {
-    const status = await mutateAsync(data);
+    const { status } = await mutateAsync(data);
 
     if (status === 201) {
       toast.success("Пользователь успешно создан");

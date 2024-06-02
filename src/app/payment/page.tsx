@@ -11,7 +11,7 @@ const PaymentPage = async ({
     notFound();
   }
 
-  const movie = await getMovieById(movieId);
+  const { data: movie } = await getMovieById(movieId);
 
   if (!movie) {
     notFound();

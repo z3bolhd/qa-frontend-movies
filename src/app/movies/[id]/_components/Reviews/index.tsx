@@ -3,14 +3,13 @@
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
-import { getUserSession } from "@hooks/getUserSession";
-import { Review } from "@lib/types";
+import { Review, Role } from "@lib/types";
 import { deleteReviewByUserId, hideReviewByUserId, showReviewByUserId } from "@lib/api";
-import { getIsAdmin } from "@hooks/getIsAdmin";
 
 import ReviewCard from "./ReviewCard";
 import PersonalReview from "./PersonalReview";
 import ReviewActions from "./ReviewActions";
+import useSession from "@hooks/useSession";
 
 interface ReviewsProps {
   reviews: Review[];
@@ -20,16 +19,16 @@ interface ReviewsProps {
 const Reviews = ({ reviews, movieId }: ReviewsProps) => {
   const router = useRouter();
 
-  const { accessToken, user } = getUserSession();
-  const isAdmin = getIsAdmin();
+  const { session, isLogged } = useSession();
+  const isAdmin = session?.roles.indexOf(Role.ADMIN) !== -1;
 
-  const personalReview = reviews?.find((review) => review.userId === user?.id);
+  const personalReview = reviews?.find((review) => review.userId === session?.id);
 
-  const shownReviews = reviews?.filter((review) => review.userId !== user?.id && !review.hidden);
-  const hiddenReviews = reviews?.filter((review) => review.userId !== user?.id && review.hidden);
+  const shownReviews = reviews?.filter((review) => review.userId !== session?.id && !review.hidden);
+  const hiddenReviews = reviews?.filter((review) => review.userId !== session?.id && review.hidden);
 
   const handleDelete = async (userId: string) => {
-    const status = await deleteReviewByUserId(movieId, userId, accessToken!);
+    const { status } = await deleteReviewByUserId(movieId, userId);
 
     if (status !== 200) {
       toast.error("Произошла ошибка");
@@ -41,7 +40,7 @@ const Reviews = ({ reviews, movieId }: ReviewsProps) => {
   };
 
   const handleShow = async (userId: string) => {
-    const status = await showReviewByUserId(movieId, userId, accessToken!);
+    const { status } = await showReviewByUserId(movieId, userId);
 
     if (status !== 200) {
       toast.error("Произошла ошибка");
@@ -53,7 +52,7 @@ const Reviews = ({ reviews, movieId }: ReviewsProps) => {
   };
 
   const handleHide = async (userId: string) => {
-    const status = await hideReviewByUserId(movieId, userId, accessToken!);
+    const { status } = await hideReviewByUserId(movieId, userId);
 
     if (status !== 200) {
       toast.error("Произошла ошибка");
@@ -68,7 +67,7 @@ const Reviews = ({ reviews, movieId }: ReviewsProps) => {
     <div className="mt-10 w-[500px]">
       <h2 className="text-3xl">Отзывы:</h2>
       <div>
-        {accessToken ? <PersonalReview review={personalReview} movieId={movieId} /> : null}
+        {isLogged ? <PersonalReview review={personalReview} movieId={movieId} /> : null}
         {reviews.length === 0 ? (
           <p className="mt-10 text-2xl">Отзывов нет. Оставьте отзыв первым!</p>
         ) : (
