@@ -31,8 +31,6 @@ spec:
                 name: qa-config
             - secretRef:
                 name: qa-secret
-      imagePullSecrets:
-        - name: regcred
 
 ---
 apiVersion: v1
