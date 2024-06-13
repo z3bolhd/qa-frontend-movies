@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description: "Все фильмы",
 };
 
-const Page = async ({ searchParams }: { searchParams?: GetMoviesParams }) => {
+const Page = async ({ searchParams }: { searchParams: GetMoviesParams }) => {
   const { data } = await getMovies({ pageSize: 9, createdAt: "desc", ...searchParams });
 
   return (
@@ -22,7 +22,11 @@ const Page = async ({ searchParams }: { searchParams?: GetMoviesParams }) => {
       ) : (
         <>
           <MoviesList movies={data.movies} />
-          <MoviesPagination currentPage={data.page || "1"} pageCount={data.pageCount} />
+          <MoviesPagination
+            searchParams={searchParams}
+            currentPage={data.page || "1"}
+            pageCount={data.pageCount}
+          />
         </>
       )}
     </main>

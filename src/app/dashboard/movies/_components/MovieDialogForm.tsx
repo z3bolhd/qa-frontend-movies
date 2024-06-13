@@ -56,7 +56,7 @@ const MovieDialogForm = ({
   const [genres, setGenres] = useState<Genre[]>([]);
 
   const fetchGenres = async () => {
-    const genres = await getGenres();
+    const { data: genres } = await getGenres();
 
     if (genres) {
       setGenres(genres);

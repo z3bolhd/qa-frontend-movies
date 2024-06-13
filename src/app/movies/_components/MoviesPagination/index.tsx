@@ -8,17 +8,16 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@components/ui/pagination";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { GetMoviesParams } from "@lib/types";
 
 interface MoviesPaginationProps {
   currentPage: string | number;
   pageCount: number;
+  searchParams: GetMoviesParams;
 }
 
-const MoviesPagination = ({ currentPage, pageCount }: MoviesPaginationProps) => {
-  const searchParams = useSearchParams();
-
-  const params = new URLSearchParams(searchParams.toString());
+const MoviesPagination = ({ currentPage, pageCount, searchParams }: MoviesPaginationProps) => {
+  const params = new URLSearchParams();
   params.delete("page");
 
   currentPage = +currentPage;
