@@ -144,17 +144,17 @@ export const createPayment = async (payment: {
   amount: number;
   card: { cardNumber: string; cardHolder: string; securityCode: number; expirationDate: string };
 }) => {
-  return await fetchData<Payment>(PaymentClient, "post", "/payment", payment);
+  return await fetchData<Payment>(PaymentClient, "post", "/create", payment);
 };
 
 export const getPayments = async (params: GetPaymentsParams) => {
   return await fetchData<GetPaymentsResponse>(
     PaymentClient,
     "get",
-    "/payment" + "?" + queryString.stringify(params, { skipNull: true }),
+    "/find-all" + "?" + queryString.stringify(params, { skipNull: true }),
   );
 };
 
 export const getUserPayments = async () => {
-  return await fetchData<Payment[]>(PaymentClient, "get", "/payment/user");
+  return await fetchData<Payment[]>(PaymentClient, "get", "/user");
 };
