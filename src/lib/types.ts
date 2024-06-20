@@ -22,6 +22,8 @@ export type User = {
 export enum AuthStatus {
   OK = "ok",
   ERROR = "error",
+  FORBIDDEN = "forbidden",
+  UNAUTHORIZED = "unauthorized",
 }
 
 export type SignInRequest = {

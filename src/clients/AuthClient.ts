@@ -17,5 +17,5 @@ AuthClient.interceptors.request.use(
 
     return config;
   },
-  (error) => Promise.reject(error),
+  async (error) => await Promise.reject(error),
 );

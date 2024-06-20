@@ -36,7 +36,7 @@ function AuthProvider({ children }: AuthProviderProps) {
     const { data, status } = await AuthClient.post<AuthResponse>("/login", {
       email,
       password,
-    }).catch((err: AxiosError) => ({ data: null, ...err }));
+    }).catch((err: AxiosError) => ({ data: null, status: err.response?.status }));
 
     if (status === 200 && data) {
       inMemoryJWT.deleteToken();
@@ -44,6 +44,14 @@ function AuthProvider({ children }: AuthProviderProps) {
       inMemoryJWT.setToken(data.accessToken, data.expiresIn);
       setSession(data.user);
       return { status: AuthStatus.OK };
+    }
+
+    if (status === 401) {
+      return { status: AuthStatus.UNAUTHORIZED };
+    }
+
+    if (status === 403) {
+      return { status: AuthStatus.FORBIDDEN };
     }
 
     return { status: AuthStatus.ERROR };
