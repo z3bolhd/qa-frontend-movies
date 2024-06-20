@@ -34,7 +34,7 @@ const MovieFilters = ({ setFilters }: MovieFiltersProps) => {
     <ul className="mr-5 flex gap-5">
       <li>
         <Select onValueChange={onPublishedValueChange}>
-          <SelectTrigger>
+          <SelectTrigger data-qa-id="movie_filter_published_select">
             <SelectValue placeholder="Опубликован" />
           </SelectTrigger>
           <SelectContent>
@@ -50,7 +50,7 @@ const MovieFilters = ({ setFilters }: MovieFiltersProps) => {
 
       <li>
         <Select onValueChange={onCreatedAtValueChange}>
-          <SelectTrigger>
+          <SelectTrigger data-qa-id="movie_filter_created_at_select">
             <SelectValue placeholder="Создано" />
           </SelectTrigger>
           <SelectContent>

@@ -72,6 +72,8 @@ const UserDialogForm = ({
           <Input
             id="fullName"
             disabled={!isCreate}
+            type="text"
+            data-qa-id="user_full_name_input"
             {...register("fullName", { value: user?.fullName || "", required: true, minLength: 1 })}
           />
           {errors.fullName && (
@@ -84,6 +86,7 @@ const UserDialogForm = ({
             id="email"
             type="email"
             disabled={!isCreate}
+            data-qa-id="user_email_input"
             {...register("email", { value: user?.email || "", required: true, minLength: 1 })}
           />
           {errors.email && (
@@ -97,6 +100,8 @@ const UserDialogForm = ({
             <Input
               id="password"
               defaultValue=""
+              type="password"
+              data-qa-id="user_password_input"
               {...register("password", { required: true, minLength: 1 })}
             />
             {errors.email && (
@@ -121,7 +126,7 @@ const UserDialogForm = ({
                 defaultValue={user?.roles[user.roles.length - 1] || roles[0]!}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Роли" />
+                  <SelectValue placeholder="Роль" data-qa-id="user_role_select" />
                 </SelectTrigger>
 
                 <SelectContent>
@@ -150,8 +155,9 @@ const UserDialogForm = ({
                   className="h-[18px] w-[18px]"
                   defaultChecked={field.value}
                   onCheckedChange={() => field.onChange(!field.value)}
-                  {...register("verified")}
                   disabled={user?.roles.includes(Role.SUPER_ADMIN) && user.verified}
+                  data-qa-id="user_verified_checkbox"
+                  {...register("verified")}
                 />
 
                 <Label htmlFor="verified" className="ml-2">
@@ -176,8 +182,9 @@ const UserDialogForm = ({
                   className="h-[18px] w-[18px]"
                   defaultChecked={field.value}
                   onCheckedChange={() => field.onChange(!field.value)}
-                  {...register("banned")}
                   disabled={user?.roles.includes(Role.SUPER_ADMIN)}
+                  data-qa-id="user_banned_checkbox"
+                  {...register("banned")}
                 />
 
                 <Label htmlFor="banned" className="ml-2">
@@ -191,7 +198,12 @@ const UserDialogForm = ({
           )}
         </div>
         <DialogFooter className="mt-3">
-          <Button type="submit" className="bg-blue-500 hover:bg-blue-600" disabled={isLoading}>
+          <Button
+            type="submit"
+            className="bg-blue-500 hover:bg-blue-600"
+            disabled={isLoading}
+            data-qa-id="user_submit_button"
+          >
             {isLoading ? <LoadingSpinner size={16} /> : footerButtonText}
           </Button>
           <DialogClose id="closeDialog" />

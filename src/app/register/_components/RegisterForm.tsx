@@ -93,6 +93,7 @@ const RegisterForm = () => {
               type="text"
               placeholder="Имя Фамилия Отчество"
               aria-invalid={errors.fullName ? "true" : "false"}
+              data-qa-id="register_full_name_input"
               {...register("fullName", {
                 required: true,
               })}
@@ -109,6 +110,7 @@ const RegisterForm = () => {
               type="email"
               placeholder="Email"
               aria-invalid={errors.email ? "true" : "false"}
+              data-qa-id="register_email_input"
               {...register("email", {
                 required: true,
               })}
@@ -126,6 +128,7 @@ const RegisterForm = () => {
               type="password"
               placeholder="Пароль"
               aria-invalid={errors.password ? "true" : "false"}
+              data-qa-id="register_password_input"
               {...register("password", {
                 required: true,
               })}
@@ -141,7 +144,12 @@ const RegisterForm = () => {
 
           <div className="mt-5">
             <Label htmlFor="passwordRepeat">Повторите пароль</Label>
-            <Input type="password" placeholder="Повторите пароль" {...register("passwordRepeat")} />
+            <Input
+              type="password"
+              placeholder="Повторите пароль"
+              {...register("passwordRepeat")}
+              data-qa-id="register_password_repeat_input"
+            />
             {errors.passwordRepeat && (
               <p className="text-red-500 text-sm mt-1" role="alert">
                 {errors.passwordRepeat.message}
@@ -150,7 +158,12 @@ const RegisterForm = () => {
           </div>
         </CardContent>
         <CardFooter className="flex flex-col">
-          <Button type="submit" className="w-full" disabled={isLoading}>
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={isLoading}
+            data-qa-id="register_submit_button"
+          >
             Зарегистрироваться
           </Button>
           <p className="mt-5">

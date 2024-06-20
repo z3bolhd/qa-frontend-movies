@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -11,7 +11,7 @@ import { Card, CardContent, CardFooter, CardHeader } from "@components/ui/card";
 import { Input } from "@components/ui/input";
 import { Label } from "@components/ui/label";
 import useSession from "@hooks/useSession";
-import { AuthStatus, SignInResponse } from "@lib/types";
+import { AuthStatus } from "@lib/types";
 
 interface LoginInput {
   email: string;
@@ -19,7 +19,7 @@ interface LoginInput {
 }
 
 const LoginForm = () => {
-  const { signIn, session, isLogged } = useSession();
+  const { signIn, isLogged } = useSession();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const {
@@ -32,21 +32,28 @@ const LoginForm = () => {
     setIsLoading(true);
     const { status } = await signIn(data);
 
-    if (status === AuthStatus.ERROR) {
-      toast.error("Неверная почта или пароль");
-    }
-
-    if (status === AuthStatus.OK) {
-      toast.success("Вы вошли в аккаунт");
-      router.push("/");
+    switch (status) {
+      case AuthStatus.UNAUTHORIZED:
+        toast.error("Неверная почта или пароль");
+        break;
+      case AuthStatus.FORBIDDEN:
+        toast.error("У вас нет доступа к ресурсу");
+        break;
+      case AuthStatus.OK:
+        toast.success("Вы вошли в аккаунт");
+        break;
+      default:
+        toast.error("Что-то пошло не так");
     }
 
     setIsLoading(false);
   };
 
-  if (isLogged && session) {
-    router.push("/");
-  }
+  useEffect(() => {
+    if (isLogged) {
+      router.push("/");
+    }
+  }, [isLogged, router]);
 
   return (
     <Card className="w-[500px] mx-auto">
@@ -62,6 +69,7 @@ const LoginForm = () => {
               type="email"
               placeholder="Email"
               className="w-full"
+              data-qa-id="login_email_input"
               {...register("email", {
                 required: true,
               })}
@@ -77,6 +85,7 @@ const LoginForm = () => {
               type="password"
               placeholder="Пароль"
               className="w-full"
+              data-qa-id="login_password_input"
               {...register("password", {
                 required: true,
               })}
@@ -87,7 +96,12 @@ const LoginForm = () => {
           </div>
         </CardContent>
         <CardFooter className="flex flex-col">
-          <Button type="submit" className="w-full" disabled={isLoading}>
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={isLoading}
+            data-qa-id="login_submit_button"
+          >
             Войти
           </Button>
 

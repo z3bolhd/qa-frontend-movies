@@ -17,21 +17,33 @@ interface ReviewActionsProps {
 const ReviewActions = ({ handleDelete, handleHide, handleShow, hidden }: ReviewActionsProps) => {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="w-5">
+      <DropdownMenuTrigger className="w-5" data-qa-id="movie_review_actions_button">
         <MoreVertical className="h-4 w-4" />
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         {hidden ? (
-          <DropdownMenuItem className="cursor-pointer" onClick={handleShow}>
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onClick={handleShow}
+            data-qa-id="movie_review_show_button"
+          >
             Показать
           </DropdownMenuItem>
         ) : (
-          <DropdownMenuItem className="cursor-pointer" onClick={handleHide}>
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onClick={handleHide}
+            data-qa-id="movie_review_hide_button"
+          >
             Скрыть
           </DropdownMenuItem>
         )}
 
-        <DropdownMenuItem className="cursor-pointer" onClick={handleDelete}>
+        <DropdownMenuItem
+          className="cursor-pointer"
+          onClick={handleDelete}
+          data-qa-id="movie_review_delete_button"
+        >
           Удалить
         </DropdownMenuItem>
       </DropdownMenuContent>

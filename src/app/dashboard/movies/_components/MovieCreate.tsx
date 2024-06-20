@@ -37,7 +37,13 @@ const MovieCreate = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="bg-blue-500 hover:bg-blue-600">Добавить фильм</Button>
+        <Button
+          className="bg-blue-500 hover:bg-blue-600"
+          type="button"
+          data-qa-id="movie_create_button"
+        >
+          Добавить фильм
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <MovieDialogForm

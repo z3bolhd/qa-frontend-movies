@@ -40,7 +40,12 @@ const MovieCellDelete = ({ id, name }: MovieCellDeleteProps) => {
           <p>Вы уверены, что хотите удалить фильм "{name}"?</p>
         </div>
         <DialogFooter className="mt-5">
-          <Button type="submit" variant="destructive" disabled={isLoading}>
+          <Button
+            type="submit"
+            variant="destructive"
+            disabled={isLoading}
+            data-qa-id="movie_delete_button"
+          >
             Удалить
           </Button>
           <DialogClose type="button" id="closeDialog" />

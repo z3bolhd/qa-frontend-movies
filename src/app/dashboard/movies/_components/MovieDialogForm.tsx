@@ -79,6 +79,7 @@ const MovieDialogForm = ({
           <Input
             id="name"
             defaultValue={movie?.name || ""}
+            data-qa-id="movie_name_input"
             {...register("name", { required: true, minLength: 1 })}
           />
           {errors.name && (
@@ -90,6 +91,7 @@ const MovieDialogForm = ({
           <Textarea
             id="description"
             defaultValue={movie?.description || ""}
+            data-qa-id="movie_description_input"
             {...register("description", { required: true })}
           />
           {errors.description && (
@@ -103,6 +105,7 @@ const MovieDialogForm = ({
             id="price"
             min={1}
             defaultValue={movie?.price || 100}
+            data-qa-id="movie_price_input"
             {...register("price", { required: true, min: 1, valueAsNumber: true })}
           />
           {errors.price && (
@@ -117,7 +120,7 @@ const MovieDialogForm = ({
             defaultValue={movie?.location || Location.MSK}
             render={({ field }) => (
               <Select value={field.value.toString()} onValueChange={field.onChange}>
-                <SelectTrigger id="location">
+                <SelectTrigger id="location" data-qa-id="movie_location_select">
                   <SelectValue placeholder="Выберите местоположение" />
                 </SelectTrigger>
                 <SelectContent>
@@ -145,6 +148,7 @@ const MovieDialogForm = ({
             id="imageUrl"
             type="url"
             defaultValue={movie?.imageUrl || ""}
+            data-qa-id="movie_image_url_input"
             {...register("imageUrl", { required: true })}
           />
           {errors.imageUrl && (
@@ -164,7 +168,7 @@ const MovieDialogForm = ({
                   field.onChange(+value);
                 }}
               >
-                <SelectTrigger id="genreId">
+                <SelectTrigger id="genreId" data-qa-id="movie_genre_select">
                   <SelectValue placeholder="Выберите жанр" />
                 </SelectTrigger>
                 <SelectContent>
@@ -198,6 +202,7 @@ const MovieDialogForm = ({
                   className="h-[18px] w-[18px]"
                   defaultChecked={field.value}
                   onCheckedChange={() => field.onChange(!field.value)}
+                  data-qa-id="movie_published_checkbox"
                   {...register("published")}
                 />
 
@@ -212,7 +217,12 @@ const MovieDialogForm = ({
           )}
         </div>
         <DialogFooter>
-          <Button type="submit" className="bg-blue-500 hover:bg-blue-600" disabled={isLoading}>
+          <Button
+            type="submit"
+            className="bg-blue-500 hover:bg-blue-600"
+            disabled={isLoading}
+            data-qa-id="movie_submit_button"
+          >
             {isLoading ? <LoadingSpinner size={16} /> : footerButtonText}
           </Button>
           <DialogClose id="closeDialog" />

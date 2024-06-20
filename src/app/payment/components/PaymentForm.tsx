@@ -82,6 +82,7 @@ const PaymentForm = ({ movieId, price, onSuccess }: PaymentFormProps) => {
           min={1}
           defaultValue={1}
           max={5}
+          data-qa-id="payment_amount_input"
           {...register("amount", { valueAsNumber: true })}
         />
         {errors.amount && <p className="text-red-500 text-sm">{errors.amount.message}</p>}
@@ -94,6 +95,7 @@ const PaymentForm = ({ movieId, price, onSuccess }: PaymentFormProps) => {
           type="text"
           placeholder="1234123412341234"
           maxLength={16}
+          data-qa-id="payment_card_number_input"
           {...register("card.cardNumber")}
         />
         {errors.card?.cardNumber && (
@@ -108,6 +110,7 @@ const PaymentForm = ({ movieId, price, onSuccess }: PaymentFormProps) => {
           id="card.cardholderName"
           type="text"
           placeholder="John Doe"
+          data-qa-id="payment_card_holder_input"
           {...register("card.cardHolder")}
         />
         {errors.card?.cardHolder && (
@@ -123,7 +126,7 @@ const PaymentForm = ({ movieId, price, onSuccess }: PaymentFormProps) => {
             control={control}
             render={({ field }) => (
               <Select onValueChange={field.onChange} value={field.value}>
-                <SelectTrigger id="month">
+                <SelectTrigger id="month" data-qa-id="payment_card_month_select">
                   <SelectValue placeholder="Месяц" />
                 </SelectTrigger>
                 <SelectContent>
@@ -156,7 +159,7 @@ const PaymentForm = ({ movieId, price, onSuccess }: PaymentFormProps) => {
             control={control}
             render={({ field }) => (
               <Select onValueChange={field.onChange} value={field.value}>
-                <SelectTrigger id="year">
+                <SelectTrigger id="year" data-qa-id="payment_card_year_select">
                   <SelectValue placeholder="Год" />
                 </SelectTrigger>
                 <SelectContent>
@@ -181,6 +184,7 @@ const PaymentForm = ({ movieId, price, onSuccess }: PaymentFormProps) => {
             placeholder="CVC"
             minLength={3}
             maxLength={3}
+            data-qa-id="payment_card_cvc_input"
             {...register("card.securityCode", { valueAsNumber: true })}
           />
           {errors.card?.securityCode && (
@@ -195,7 +199,12 @@ const PaymentForm = ({ movieId, price, onSuccess }: PaymentFormProps) => {
       </div>
 
       <div className="mt-5">
-        <Button type="submit" className="w-full bg-blue-500 hover:bg-blue-600" disabled={isLoading}>
+        <Button
+          type="submit"
+          className="w-full bg-blue-500 hover:bg-blue-600"
+          disabled={isLoading}
+          data-qa-id="payment_submit_button"
+        >
           {isLoading ? <LoadingSpinner size={16} /> : "Оплатить"}
         </Button>
       </div>

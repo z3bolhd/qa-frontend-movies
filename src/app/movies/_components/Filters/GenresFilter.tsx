@@ -51,7 +51,11 @@ const GenresFilter = () => {
 
   return (
     <div className="w-36">
-      <Select value={paramGenreId} onValueChange={handleChange}>
+      <Select
+        value={paramGenreId}
+        onValueChange={handleChange}
+        data-qa-id="movies_filter_genre_select"
+      >
         <SelectTrigger value={paramGenreId}>
           <SelectValue placeholder="Жанр" />
         </SelectTrigger>

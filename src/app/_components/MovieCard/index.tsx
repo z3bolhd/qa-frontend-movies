@@ -30,8 +30,8 @@ const MovieCard = async ({ id, name, description, imageUrl }: MovieCardProps) =>
         <p className="mt-5 truncate">{description}</p>
       </CardContent>
       <CardFooter className="flex flex-row-reverse">
-        <Link href={`/movies/${id}`}>
-          <Button>Подробнее</Button>
+        <Link href={`/movies/${id}`} data-qa-id="more_button">
+          <Button type="button">Подробнее</Button>
         </Link>
       </CardFooter>
     </Card>

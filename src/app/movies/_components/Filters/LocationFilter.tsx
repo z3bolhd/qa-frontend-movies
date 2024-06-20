@@ -41,7 +41,7 @@ const LocationFilter = () => {
     <div className="w-36">
       <Select value={locationParam} onValueChange={handleChange}>
         <SelectTrigger>
-          <SelectValue placeholder="Место" />
+          <SelectValue placeholder="Место" data-qa-id="movies_filter_location_select" />
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="all">Все</SelectItem>

@@ -12,6 +12,7 @@ const Profile = () => {
   const path = usePathname();
 
   const isProfilePage = path === "/profile";
+  const isLoginOrRegisterPage = path === "/login" || path === "/register";
 
   const handleSignOut = () => {
     signOut();
@@ -26,17 +27,22 @@ const Profile = () => {
             <p className="text-black text-sm">{session?.fullName?.charAt(0) || ""}</p>
           </div>
           {isProfilePage ? (
-            <Button variant="destructive" onClick={handleSignOut}>
+            <Button
+              variant="destructive"
+              onClick={handleSignOut}
+              type="button"
+              data-qa-id="logout_button"
+            >
               Выход
             </Button>
           ) : (
-            <Link href="/profile">
+            <Link href="/profile" data-qa-id="profile_page_button">
               <Button type="button">Профиль</Button>
             </Link>
           )}
         </>
-      ) : (
-        <Link href="/login">
+      ) : isLoginOrRegisterPage ? null : (
+        <Link href="/login" data-qa-id="login_page_button">
           <Button type="button">Войти</Button>
         </Link>
       )}

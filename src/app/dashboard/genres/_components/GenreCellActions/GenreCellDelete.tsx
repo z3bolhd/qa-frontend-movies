@@ -38,7 +38,12 @@ const GenreCellDelete = ({ id, name }: Genre) => {
         <p className="text-red-500 mt-3 text-sm">Фильмы с этим жанром тоже удалятся!</p>
       </div>
       <DialogFooter className="mt-5">
-        <Button type="submit" variant="destructive" disabled={isLoading}>
+        <Button
+          type="submit"
+          variant="destructive"
+          disabled={isLoading}
+          data-qa-id="genre_delete_submit_button"
+        >
           Удалить
         </Button>
         <DialogClose type="button" id="closeDialog" />

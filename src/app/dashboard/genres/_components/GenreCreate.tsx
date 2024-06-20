@@ -54,7 +54,9 @@ const GenreCreate = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="bg-blue-500 hover:bg-blue-600">Создать жанр</Button>
+        <Button className="bg-blue-500 hover:bg-blue-600" data-qa-id="genre_create_button">
+          Создать жанр
+        </Button>
       </DialogTrigger>
 
       <DialogContent>
@@ -65,11 +67,21 @@ const GenreCreate = () => {
           </DialogDescription>
           <div className="mt-3">
             <Label>Название</Label>
-            <Input id="name" type="text" {...register("name", { required: true })} />
+            <Input
+              id="name"
+              type="text"
+              {...register("name", { required: true })}
+              data-qa-id="genre_create_name_input"
+            />
             {errors.name && <p className="mt-1 text-sm text-red-500">{errors.name.message}</p>}
           </div>
           <DialogFooter className="mt-3">
-            <Button className="bg-blue-500 hover:bg-blue-600" type="submit" disabled={isLoading}>
+            <Button
+              className="bg-blue-500 hover:bg-blue-600"
+              type="submit"
+              disabled={isLoading}
+              data-qa-id="genre_create_submit_button"
+            >
               {isLoading ? <LoadingSpinner size={16} /> : "Создать"}
             </Button>
             <DialogClose id="closeDialog" />

@@ -36,7 +36,13 @@ const UserCreate = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="bg-blue-500 hover:bg-blue-600">Создать пользователя</Button>
+        <Button
+          className="bg-blue-500 hover:bg-blue-600"
+          type="button"
+          data-qa-id="user_create_button"
+        >
+          Создать пользователя
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <UserDialogForm

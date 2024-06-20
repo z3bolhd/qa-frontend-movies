@@ -32,7 +32,7 @@ const CreatedAtFilter = () => {
     <div className="w-36">
       <Select value={createdAtParam} onValueChange={handleChange}>
         <SelectTrigger>
-          <SelectValue placeholder="Создано" />
+          <SelectValue placeholder="Создано" data-qa-id="movies_filter_created_at_select" />
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="desc">Новые</SelectItem>

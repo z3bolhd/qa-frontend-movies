@@ -24,12 +24,17 @@ const UserCellActions = ({ row }: UserCellActionsProps) => {
   return (
     <Dialog>
       <DropdownMenu>
-        <DropdownMenuTrigger className="flex items-center justify-center">
+        <DropdownMenuTrigger
+          className="flex items-center justify-center"
+          data-qa-id="user_actions_button"
+        >
           <MoreHorizontal className="h-4 w-4" />
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           <DialogTrigger asChild>
-            <DropdownMenuItem className="cursor-pointer">Изменить</DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer" data-qa-id="user_action_edit_button">
+              Изменить
+            </DropdownMenuItem>
           </DialogTrigger>
         </DropdownMenuContent>
       </DropdownMenu>

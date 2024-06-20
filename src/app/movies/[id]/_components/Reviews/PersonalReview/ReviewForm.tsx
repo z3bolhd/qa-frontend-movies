@@ -87,6 +87,7 @@ const ReviewForm = ({ movieId, review, closeForm }: ReviewFormProps) => {
         className={cn("outline rounded-md transition-all text-base min-h-[125px]")}
         placeholder="Написать отзыв"
         defaultValue={review?.text ?? ""}
+        data-qa-id="movie_review_input"
         {...register("text", {
           required: "Поле отзыва обязательно к заполнению",
         })}
@@ -102,7 +103,7 @@ const ReviewForm = ({ movieId, review, closeForm }: ReviewFormProps) => {
               render={({ field }) => (
                 <Select value={field.value.toString()} onValueChange={field.onChange}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Оценка" />
+                    <SelectValue placeholder="Оценка" data-qa-id="movie_rating_select" />
                   </SelectTrigger>
                   <SelectContent>
                     {[1, 2, 3, 4, 5].map((rating) => (
@@ -121,7 +122,7 @@ const ReviewForm = ({ movieId, review, closeForm }: ReviewFormProps) => {
             />
           </div>
         </div>
-        <Button type="submit" className="w-fit">
+        <Button type="submit" className="w-fit" data-qa-id="movie_review_submit_button">
           {review?.text || review?.rating ? "Сохранить" : "Отправить"}
         </Button>
       </div>

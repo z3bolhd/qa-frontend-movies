@@ -29,9 +29,6 @@ interface MoviesTableProps {
 }
 
 const MoviesTable = ({ setFilters, moviesResponse }: MoviesTableProps) => {
-  // const { movies, isLoading, pageCount, currentPage, setCurrentPage } =
-  //   useContext(MoviesDataContext);
-
   if (!moviesResponse) {
     return null;
   }

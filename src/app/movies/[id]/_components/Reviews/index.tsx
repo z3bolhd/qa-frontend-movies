@@ -20,7 +20,7 @@ const Reviews = ({ reviews, movieId }: ReviewsProps) => {
   const router = useRouter();
 
   const { session, isLogged } = useSession();
-  const isAdmin = session?.roles.indexOf(Role.ADMIN) !== -1;
+  const isAdmin = isLogged && session?.roles.indexOf(Role.ADMIN) !== -1;
 
   const personalReview = reviews?.find((review) => review.userId === session?.id);
 

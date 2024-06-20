@@ -28,15 +28,22 @@ const MovieCellActions = ({ row }: MovieCellActionsProps) => {
   return (
     <Dialog>
       <DropdownMenu>
-        <DropdownMenuTrigger className="flex items-center justify-center">
+        <DropdownMenuTrigger
+          className="flex items-center justify-center"
+          data-qa-id="movie_actions_button"
+        >
           <MoreHorizontal className="h-4 w-4" />
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           <DialogTrigger asChild onClick={() => setDialog("edit")}>
-            <DropdownMenuItem className="cursor-pointer">Изменить</DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer" data-qa-id="movie_action_edit_button">
+              Изменить
+            </DropdownMenuItem>
           </DialogTrigger>
           <DialogTrigger asChild onClick={() => setDialog("delete")}>
-            <DropdownMenuItem className="cursor-pointer">Удалить</DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer" data-qa-id="movie_action_delete_button">
+              Удалить
+            </DropdownMenuItem>
           </DialogTrigger>
         </DropdownMenuContent>
       </DropdownMenu>
