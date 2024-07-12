@@ -35,7 +35,7 @@ export type SignInResponse = {
   status: AuthStatus;
 };
 
-export type AuthResponse = {
+export type LoginResponse = {
   accessToken: string;
   expiresIn: number;
   user: User;

@@ -1,4 +1,4 @@
-import { AuthClient } from "@clients/AuthClient";
+import { AuthService } from "@api/services/AuthService";
 
 const inMemoryJWTService = () => {
   let inMemoryJWT: string | null = null;
@@ -8,7 +8,7 @@ const inMemoryJWTService = () => {
     const timeoutTrigger = expiresIn - new Date().getTime();
 
     refreshTimeoutId = setTimeout(() => {
-      AuthClient.get("/refresh-tokens")
+      AuthService.refreshTokens({})
         .then((res) => {
           const { accessToken, expiresIn } = res.data;
           setToken(accessToken, expiresIn);
