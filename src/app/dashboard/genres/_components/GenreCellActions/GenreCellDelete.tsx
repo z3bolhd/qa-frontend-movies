@@ -5,14 +5,15 @@ import { useMutation, useQueryClient } from "react-query";
 
 import { Button } from "@components/ui/button";
 import { DialogClose, DialogFooter, DialogHeader } from "@components/ui/dialog";
-import { deleteGenre } from "@lib/api";
+
 import { Genre } from "@lib/types";
+import { MoviesService } from "@api/services";
 
 const GenreCellDelete = ({ id, name }: Genre) => {
   const queryClient = useQueryClient();
 
   const { mutateAsync, isLoading } = useMutation({
-    mutationFn: () => deleteGenre(id),
+    mutationFn: () => MoviesService.deleteGenre({ params: { id } }),
   });
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {

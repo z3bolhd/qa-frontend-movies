@@ -4,26 +4,22 @@ import UsersTable from "./_components/Table";
 import UserCreate from "./_components/UserCreate";
 
 import { useQuery } from "react-query";
-import { getUsers } from "@lib/api";
+
 import { useState } from "react";
 import { GetUsersParams } from "@lib/types";
 import LoadingSpinner from "@components/LoadingSpinner";
+import { AuthService } from "@api/services/AuthService";
 
 const DashboardUsersPage = () => {
   const [userFilters, setUserFilters] = useState<GetUsersParams>({
     createdAt: "desc",
   });
 
-  const { data, isLoading, error, status } = useQuery(["users", userFilters], () =>
-    getUsers(userFilters),
+  const { data, isLoading, isError, status } = useQuery(["users", userFilters], () =>
+    AuthService.getUsers({ params: userFilters }),
   );
 
-  const usersResponse = data?.data;
-
-  if (
-    ((error || !data?.status) && !isLoading && status === "success" && data?.status !== 200) ||
-    !usersResponse
-  ) {
+  if (isError && !isLoading && !data) {
     return <p className="text-xl mt-36">Что-то пошло не так</p>;
   }
 
@@ -38,7 +34,7 @@ const DashboardUsersPage = () => {
           <LoadingSpinner size={50} />
         </div>
       ) : (
-        <UsersTable usersResponse={usersResponse} setFilters={setUserFilters} />
+        <UsersTable usersResponse={data!.data} setFilters={setUserFilters} />
       )}
     </div>
   );

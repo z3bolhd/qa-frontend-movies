@@ -10,8 +10,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@components/ui/select";
-import { getGenres } from "@lib/api";
 import { Genre } from "@lib/types";
+import { MoviesService } from "@api/services";
 
 const GenresFilter = () => {
   const searchParams = useSearchParams();
@@ -23,7 +23,7 @@ const GenresFilter = () => {
 
   useEffect(() => {
     const fetchGenres = async () => {
-      const { data: genres } = await getGenres();
+      const { data: genres } = await MoviesService.getGenres({});
       if (!genres) {
         return;
       }

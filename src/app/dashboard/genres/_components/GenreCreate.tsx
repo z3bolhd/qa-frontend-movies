@@ -17,8 +17,9 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Label } from "@components/ui/label";
 import { Input } from "@components/ui/input";
-import { createGenre } from "@lib/api";
+
 import LoadingSpinner from "@components/LoadingSpinner";
+import { MoviesService } from "@api/services";
 
 import { GenreFormSchema, genreFormSchema } from "./GenreFormSchema";
 
@@ -32,7 +33,7 @@ const GenreCreate = () => {
   const queryClient = useQueryClient();
 
   const { mutateAsync, isLoading } = useMutation({
-    mutationFn: (name: string) => createGenre(name),
+    mutationFn: (name: string) => MoviesService.createGenre({ params: { name } }),
   });
 
   const onSubmit: SubmitHandler<GenreFormSchema> = async (data) => {

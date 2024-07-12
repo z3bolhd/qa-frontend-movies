@@ -1,5 +1,5 @@
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
@@ -10,11 +10,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@components/ui/select";
-import { createReview, editReview } from "@lib/api";
+
 import { Review } from "@lib/types";
 import { cn } from "@lib/utils";
 import { Textarea } from "@components/ui/textarea";
 import { Button } from "@components/ui/button";
+import { MoviesService } from "@api/services";
 
 interface ReviewFormProps {
   review?: Review;
@@ -42,6 +43,51 @@ const ReviewForm = ({ movieId, review, closeForm }: ReviewFormProps) => {
     },
   });
 
+  const editReview = useCallback(async (data: ReviewInput) => {
+    const { status } = await MoviesService.editReview({
+      params: {
+        movieId,
+        text: data.text,
+        rating: Number(data.rating),
+      },
+    });
+
+    if (status !== 200) {
+      toast.error("Произошла ошибка");
+      return;
+    }
+
+    toast.success("Отзыв успешно обновлен");
+  }, []);
+
+  const createReview = useCallback(async (data: ReviewInput) => {
+    const { status } = await MoviesService.createReview({
+      params: {
+        movieId,
+        text: data.text,
+        rating: Number(data.rating),
+      },
+    });
+
+    if (status !== 201) {
+      toast.error("Произошла ошибка");
+      return;
+    }
+
+    toast.success("Отзыв успешно создан");
+  }, []);
+
+  const onSubmit: SubmitHandler<ReviewInput> = async (data) => {
+    if (review?.text || review?.rating) {
+      await editReview(data);
+    } else {
+      await createReview(data);
+    }
+
+    closeForm();
+    router.refresh();
+  };
+
   useEffect(() => {
     for (const error of Object.values(errors)) {
       if (error.message) {
@@ -50,43 +96,13 @@ const ReviewForm = ({ movieId, review, closeForm }: ReviewFormProps) => {
     }
   }, [errors]);
 
-  const onSubmit: SubmitHandler<ReviewInput> = async (data) => {
-    if (review?.text || review?.rating) {
-      const { status } = await editReview(movieId, {
-        text: data.text,
-        rating: Number(data.rating),
-      });
-
-      if (status !== 200) {
-        toast.error("Произошла ошибка");
-        return;
-      }
-
-      toast.success("Отзыв успешно обновлен");
-    } else {
-      const { status } = await createReview(movieId, {
-        text: data.text,
-        rating: Number(data.rating),
-      });
-
-      if (status !== 201) {
-        toast.error("Произошла ошибка");
-        return;
-      }
-
-      toast.success("Отзыв успешно создан");
-    }
-
-    closeForm();
-    router.refresh();
-  };
-
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Textarea
         className={cn("outline rounded-md transition-all text-base min-h-[125px]")}
         placeholder="Написать отзыв"
         defaultValue={review?.text ?? ""}
+        minLength={5}
         data-qa-id="movie_review_input"
         {...register("text", {
           required: "Поле отзыва обязательно к заполнению",

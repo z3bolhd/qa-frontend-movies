@@ -5,22 +5,25 @@ import { useQuery } from "react-query";
 
 import { GetPaymentsParams } from "@lib/types";
 import PaymentsTable from "./_components/Table";
-import { getPayments } from "@lib/api";
+
 import LoadingSpinner from "@components/LoadingSpinner";
+import { PaymentService } from "@api/services/PaymentService";
 
 const PaymentsPage = () => {
   const [paymentFilters, setPaymentFilters] = useState<GetPaymentsParams>({
     createdAt: "desc",
   });
 
-  const { data, isLoading } = useQuery(["payments", paymentFilters], () =>
-    getPayments(paymentFilters),
+  const {
+    data: response,
+    isLoading,
+    isError,
+  } = useQuery(["payments", paymentFilters], () =>
+    PaymentService.getPayments({ params: paymentFilters }),
   );
 
-  const paymentsResponse = data?.data;
-
-  if (data?.status !== 200 || !paymentsResponse) {
-    return <p className="text-xl mt-36">Что-то пошло не так</p>;
+  if (isError && !isLoading && !response?.data) {
+    return <p className="text-xl mt-36 text-center">Что-то пошло не так</p>;
   }
 
   return (
@@ -34,7 +37,7 @@ const PaymentsPage = () => {
           <LoadingSpinner size={50} />
         </div>
       ) : (
-        <PaymentsTable paymentsResponse={paymentsResponse || []} setFilters={setPaymentFilters} />
+        <PaymentsTable paymentsResponse={response!.data || []} setFilters={setPaymentFilters} />
       )}
     </div>
   );

@@ -2,14 +2,14 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import { Metadata } from "next";
 
-import { getMovieById } from "@lib/api";
 import Rating from "./_components/Rating";
 
 import BuyTicketButton from "./_components/BuyTicketButton";
 import Reviews from "./_components/Reviews";
+import { MoviesService } from "@api/services";
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
-  const { data: movie } = await getMovieById(params.id);
+  const { data: movie } = await MoviesService.getMovieById({ params: { id: Number(params.id) } });
 
   return {
     title: movie?.name + " | Cinescope",
@@ -23,9 +23,9 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
 }
 
 const MoviePage = async ({ params }: { params: { id: string } }) => {
-  const { data: movie } = await getMovieById(params.id);
+  const response = await MoviesService.getMovieById({ params: { id: Number(params.id) } });
 
-  if (!movie) {
+  if (!response) {
     notFound();
   }
 
@@ -38,7 +38,7 @@ const MoviePage = async ({ params }: { params: { id: string } }) => {
     genre: { name: genreName },
     reviews,
     price,
-  } = movie;
+  } = response.data;
 
   return (
     <main className="py-10">

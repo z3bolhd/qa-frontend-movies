@@ -7,17 +7,22 @@ import MoviesTable from "./_components/Table";
 import MovieCreate from "./_components/MovieCreate";
 import MovieFilters from "./_components/MovieFilters";
 import { GetMoviesParams } from "@lib/types";
-import { getMovies } from "@lib/api";
+
 import LoadingSpinner from "@components/LoadingSpinner";
+import { MoviesService } from "@api/services";
 
 const DashboardMoviesPage = () => {
   const [movieFilters, setMovieFilters] = useState<GetMoviesParams>({
     createdAt: "desc",
   });
 
-  const { data, isLoading } = useQuery(["movies", movieFilters], () => getMovies(movieFilters), {
-    keepPreviousData: true,
-  });
+  const { data, isLoading } = useQuery(
+    ["movies", movieFilters],
+    () => MoviesService.getMovies({ params: movieFilters }),
+    {
+      keepPreviousData: true,
+    },
+  );
 
   const moviesResponse = data?.data;
 

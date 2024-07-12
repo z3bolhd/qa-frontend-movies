@@ -3,11 +3,12 @@
 import GenreCreate from "./_components/GenreCreate";
 import GenresTable from "./_components/Table";
 import { useQuery } from "react-query";
-import { getGenres } from "@lib/api";
+
 import LoadingSpinner from "@components/LoadingSpinner";
+import { MoviesService } from "@api/services";
 
 const DashboardGenresPage = () => {
-  const { data, isLoading } = useQuery("genres", getGenres);
+  const { data, isLoading, isError } = useQuery("genres", () => MoviesService.getGenres({}));
 
   if (isLoading) {
     return (
@@ -17,7 +18,9 @@ const DashboardGenresPage = () => {
     );
   }
 
-  const genres = data?.data;
+  if (isError) {
+    return <p className="text-xl mt-36">Что-то пошло не так</p>;
+  }
 
   return (
     <div>
@@ -25,7 +28,7 @@ const DashboardGenresPage = () => {
         <h2 className="text-4xl">Жанры</h2>
         <GenreCreate />
       </div>
-      <GenresTable genres={genres || []} />
+      <GenresTable genres={data!.data || []} />
     </div>
   );
 };

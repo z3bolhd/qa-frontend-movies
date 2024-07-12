@@ -1,10 +1,10 @@
 "use client";
-import { AuthResponse, AuthStatus, SignInRequest, SignInResponse, User } from "@lib/types";
-import { AxiosError } from "axios";
 import { createContext, useCallback, useEffect, useState } from "react";
 
-import { AuthClient } from "@clients/AuthClient";
+import { AuthStatus, SignInRequest, SignInResponse, User } from "@lib/types";
 import inMemoryJWT from "@lib/inMemoryJWT";
+
+import { AuthService } from "@api/services/AuthService";
 
 interface AuthContextProps {
   isLogged: boolean;
@@ -32,11 +32,8 @@ function AuthProvider({ children }: AuthProviderProps) {
   const [isLogged, setIsLogged] = useState(false);
   const [session, setSession] = useState<AuthContextProps["session"]>(null);
 
-  const signIn = async ({ email, password }: SignInRequest) => {
-    const { data, status } = await AuthClient.post<AuthResponse>("/login", {
-      email,
-      password,
-    }).catch((err: AxiosError) => ({ data: null, status: err.response?.status }));
+  const signIn = async (credentials: SignInRequest) => {
+    const { data, status } = await AuthService.login({ params: credentials });
 
     if (status === 200 && data) {
       inMemoryJWT.deleteToken();
@@ -58,7 +55,7 @@ function AuthProvider({ children }: AuthProviderProps) {
   };
 
   const signOut = async () => {
-    const data = await AuthClient.get("/logout");
+    const data = await AuthService.logout({});
     if (data.status === 200) {
       inMemoryJWT.deleteToken();
       setIsLogged(false);
@@ -69,7 +66,7 @@ function AuthProvider({ children }: AuthProviderProps) {
 
   const fetchUserData = useCallback(async () => {
     try {
-      const { data } = await AuthClient.get("/user/me");
+      const { data } = await AuthService.getUserInfo({});
       setSession(data);
       setIsLogged(true);
     } catch (e) {
@@ -80,7 +77,7 @@ function AuthProvider({ children }: AuthProviderProps) {
 
   const refreshTokens = useCallback(async () => {
     try {
-      const { data } = await AuthClient.get("/refresh-tokens");
+      const { data } = await AuthService.refreshTokens({});
 
       const { accessToken, expiresIn } = data;
 

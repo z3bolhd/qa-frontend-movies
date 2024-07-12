@@ -3,8 +3,9 @@ import toast from "react-hot-toast";
 
 import { Button } from "@components/ui/button";
 import { DialogClose, DialogFooter, DialogHeader, DialogTitle } from "@components/ui/dialog";
-import { deleteMovie } from "@lib/api";
+
 import { Movie } from "@lib/types";
+import { MoviesService } from "@api/services";
 
 interface MovieCellDeleteProps extends Pick<Movie, "id" | "name"> {}
 
@@ -12,7 +13,7 @@ const MovieCellDelete = ({ id, name }: MovieCellDeleteProps) => {
   const queryClient = useQueryClient();
 
   const { mutateAsync, isLoading } = useMutation({
-    mutationFn: () => deleteMovie(id),
+    mutationFn: () => MoviesService.deleteMovie({ params: { id } }),
   });
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {

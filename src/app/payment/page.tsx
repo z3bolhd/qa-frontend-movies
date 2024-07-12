@@ -1,6 +1,6 @@
-import { getMovieById } from "@lib/api";
 import { notFound } from "next/navigation";
 import PaymentCard from "./components/PaymentCard";
+import { MoviesService } from "@api/services";
 
 const PaymentPage = async ({
   searchParams: { movieId },
@@ -11,15 +11,19 @@ const PaymentPage = async ({
     notFound();
   }
 
-  const { data: movie } = await getMovieById(movieId);
+  const response = await MoviesService.getMovieById({
+    params: {
+      id: Number(movieId),
+    },
+  });
 
-  if (!movie) {
+  if (!response) {
     notFound();
   }
 
   return (
     <div className="mt-36 mx-auto w-fit">
-      <PaymentCard {...movie} />
+      <PaymentCard {...response.data} />
     </div>
   );
 };

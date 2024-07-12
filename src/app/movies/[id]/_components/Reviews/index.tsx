@@ -4,12 +4,12 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
 import { Review, Role } from "@lib/types";
-import { deleteReviewByUserId, hideReviewByUserId, showReviewByUserId } from "@lib/api";
 
 import ReviewCard from "./ReviewCard";
 import PersonalReview from "./PersonalReview";
 import ReviewActions from "./ReviewActions";
 import useSession from "@hooks/useSession";
+import { MoviesService } from "@api/services";
 
 interface ReviewsProps {
   reviews: Review[];
@@ -28,7 +28,7 @@ const Reviews = ({ reviews, movieId }: ReviewsProps) => {
   const hiddenReviews = reviews?.filter((review) => review.userId !== session?.id && review.hidden);
 
   const handleDelete = async (userId: string) => {
-    const { status } = await deleteReviewByUserId(movieId, userId);
+    const { status } = await MoviesService.deleteReviewByUserId({ params: { movieId, userId } });
 
     if (status !== 200) {
       toast.error("Произошла ошибка");
@@ -40,7 +40,7 @@ const Reviews = ({ reviews, movieId }: ReviewsProps) => {
   };
 
   const handleShow = async (userId: string) => {
-    const { status } = await showReviewByUserId(movieId, userId);
+    const { status } = await MoviesService.showReviewByUserId({ params: { movieId, userId } });
 
     if (status !== 200) {
       toast.error("Произошла ошибка");
@@ -52,7 +52,7 @@ const Reviews = ({ reviews, movieId }: ReviewsProps) => {
   };
 
   const handleHide = async (userId: string) => {
-    const { status } = await hideReviewByUserId(movieId, userId);
+    const { status } = await MoviesService.hideReviewByUserId({ params: { movieId, userId } });
 
     if (status !== 200) {
       toast.error("Произошла ошибка");

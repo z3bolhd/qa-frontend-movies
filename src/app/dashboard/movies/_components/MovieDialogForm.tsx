@@ -23,8 +23,9 @@ import {
   SelectValue,
 } from "@components/ui/select";
 import { Textarea } from "@components/ui/textarea";
-import { getGenres } from "@lib/api";
+
 import { Genre, Location, Movie } from "@lib/types";
+import { MoviesService } from "@api/services";
 
 import { MovieFormSchema } from "./MovieFormSchema";
 
@@ -56,7 +57,7 @@ const MovieDialogForm = ({
   const [genres, setGenres] = useState<Genre[]>([]);
 
   const fetchGenres = async () => {
-    const { data: genres } = await getGenres();
+    const { data: genres } = await MoviesService.getGenres({});
 
     if (genres) {
       setGenres(genres);

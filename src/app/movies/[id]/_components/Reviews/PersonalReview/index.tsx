@@ -1,15 +1,17 @@
 "use client";
 
-import { Review } from "@lib/types";
-import PersonalReviewActions from "./PersonalReviewActions";
-import Link from "next/link";
 import { useState } from "react";
+import Link from "next/link";
+import toast from "react-hot-toast";
+import { Review } from "@lib/types";
+import { useRouter } from "next/navigation";
+
+import useSession from "@hooks/useSession";
+import { MoviesService } from "@api/services";
+
+import PersonalReviewActions from "./PersonalReviewActions";
 import ReviewCard from "../ReviewCard";
 import ReviewForm from "./ReviewForm";
-import { deleteReview } from "@lib/api";
-import toast from "react-hot-toast";
-import { useRouter } from "next/navigation";
-import useSession from "@hooks/useSession";
 
 interface PersonalReviewProps {
   review?: Review;
@@ -32,7 +34,9 @@ const PersonalReview = ({ review, movieId }: PersonalReviewProps) => {
   };
 
   const handleDelete = async () => {
-    const { status } = await deleteReview(movieId);
+    const { status } = await MoviesService.deleteReview({
+      params: { movieId },
+    });
 
     if (status !== 200) {
       toast.error("Произошла ошибка");

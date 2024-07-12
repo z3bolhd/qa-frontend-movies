@@ -1,14 +1,15 @@
 "use client";
 
 import { SubmitHandler, useForm } from "react-hook-form";
-import { UserFormSchema, userFormSchema } from "./UserFormSchema";
+import { useMutation, useQueryClient } from "react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Dialog, DialogContent, DialogTrigger } from "@components/ui/dialog";
-import { Button } from "@components/ui/button";
-import UserDialogForm from "./UserDialogForm";
-import { createUser } from "@lib/api";
 import toast from "react-hot-toast";
-import { useMutation, useQueryClient } from "react-query";
+import { Button } from "@components/ui/button";
+
+import UserDialogForm from "./UserDialogForm";
+import { UserFormSchema, userFormSchema } from "./UserFormSchema";
+import { AuthService } from "@api/services/AuthService";
 
 const UserCreate = () => {
   const form = useForm<UserFormSchema>({
@@ -17,7 +18,8 @@ const UserCreate = () => {
 
   const queryClient = useQueryClient();
   const { mutateAsync, isLoading } = useMutation({
-    mutationFn: (data: UserFormSchema) => createUser({ ...data, password: data.password! }),
+    mutationFn: (data: UserFormSchema) =>
+      AuthService.createUser({ params: { ...data, password: data.password! } }),
   });
 
   const onSubmit: SubmitHandler<UserFormSchema> = async (data) => {

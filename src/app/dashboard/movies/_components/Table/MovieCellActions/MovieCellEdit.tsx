@@ -4,10 +4,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
 
 import { Movie } from "@lib/types";
-import { patchMovie } from "@lib/api";
 
 import MovieDialogForm from "../../MovieDialogForm";
 import { MovieFormSchema, movieFormSchema } from "../../MovieFormSchema";
+import { MoviesService } from "@api/services";
 
 const MovieCellEdit = (movie: Movie) => {
   const form = useForm<MovieFormSchema>({
@@ -17,7 +17,8 @@ const MovieCellEdit = (movie: Movie) => {
   const queryClient = useQueryClient();
 
   const { mutateAsync, isLoading } = useMutation({
-    mutationFn: (data: MovieFormSchema) => patchMovie({ ...data, id: movie.id }),
+    mutationFn: (data: MovieFormSchema) =>
+      MoviesService.editMovie({ params: { id: movie.id, ...data } }),
   });
 
   const onSubmit: SubmitHandler<MovieFormSchema> = async (data) => {

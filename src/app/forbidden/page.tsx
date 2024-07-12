@@ -2,7 +2,7 @@ import { Button } from "@components/ui/button";
 import { Card, CardFooter, CardHeader } from "@components/ui/card";
 import Link from "next/link";
 
-const ForbiddenPage = () => {
+const ForbiddenPage = () => (
   <div className="w-full h-full mt-36 flex flex-col items-center justify-center">
     <Card className="w-[500px] mx-auto">
       <CardHeader>
@@ -14,7 +14,7 @@ const ForbiddenPage = () => {
         </Link>
       </CardFooter>
     </Card>
-  </div>;
-};
+  </div>
+);
 
 export default ForbiddenPage;

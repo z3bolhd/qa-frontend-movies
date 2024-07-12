@@ -12,10 +12,11 @@ import { Button } from "@components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@components/ui/card";
 import { Input } from "@components/ui/input";
 import { Label } from "@components/ui/label";
-import { registerUser } from "@lib/api";
+
 import { NODE_ENV } from "@lib/consts";
 
 import PasswordTooltip from "./PasswordTooltip";
+import { AuthService } from "@api/services/AuthService";
 
 const formSchema = z
   .object({
@@ -59,7 +60,7 @@ const RegisterForm = () => {
 
   const onSubmit: SubmitHandler<FormSchema> = async (data) => {
     setIsLoading(true);
-    const { status } = await registerUser(data);
+    const { status } = await AuthService.register({ params: data });
 
     if (status === 201) {
       if (NODE_ENV === "production") {

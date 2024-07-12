@@ -3,12 +3,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
 
 import { User } from "@lib/types";
-import { patchUser } from "@lib/api";
 
 import { UserFormSchema, userFormSchema } from "../../UserFormSchema";
 import UserDialogForm from "../../UserDialogForm";
 
 import { useMutation, useQueryClient } from "react-query";
+import { AuthService } from "@api/services/AuthService";
 
 const UserCellEdit = (user: User) => {
   const form = useForm<UserFormSchema>({
@@ -16,7 +16,7 @@ const UserCellEdit = (user: User) => {
   });
   const queryClient = useQueryClient();
   const { mutateAsync, isLoading } = useMutation((data: UserFormSchema) =>
-    patchUser({ ...data, id: user.id }),
+    AuthService.editUser({ params: { ...data, id: user.id } }),
   );
 
   const onSubmit: SubmitHandler<UserFormSchema> = async (data) => {

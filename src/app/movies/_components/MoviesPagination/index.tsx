@@ -16,7 +16,7 @@ interface MoviesPaginationProps {
   searchParams: GetMoviesParams;
 }
 
-const MoviesPagination = ({ currentPage, pageCount, searchParams }: MoviesPaginationProps) => {
+const MoviesPagination = ({ currentPage, pageCount }: MoviesPaginationProps) => {
   const params = new URLSearchParams();
   params.delete("page");
 

@@ -14,8 +14,10 @@ import {
 } from "@components/ui/select";
 import { Button } from "@components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createPayment } from "@lib/api";
+
 import LoadingSpinner from "@components/LoadingSpinner";
+import { PaymentService } from "@api/services/PaymentService";
+import { AxiosError } from "axios";
 
 interface PaymentFormProps {
   movieId: number;
@@ -41,32 +43,35 @@ const PaymentForm = ({ movieId, price, onSuccess }: PaymentFormProps) => {
     setIsLoading(true);
     const expirationDate = data.card.expirationMonth + "/" + data.card.expirationYear;
 
-    const { status } = await createPayment({
-      movieId: movieId,
-      amount: data.amount,
-      card: {
-        ...data.card,
-        expirationDate,
-      },
-    });
+    try {
+      const { status } = await PaymentService.createPayment({
+        params: {
+          movieId: movieId,
+          amount: data.amount,
+          card: {
+            ...data.card,
+            expirationDate,
+          },
+        },
+      });
 
-    switch (status) {
-      case 201:
-        toast.success("Оплата прошла успешно");
-        onSuccess();
-        break;
-      case 400:
-        toast.error("Неверные данные карты");
-        break;
-      case 404:
-        toast.error("Фильм не найден");
-        break;
-      case 503:
-        toast.error("Сервис временно недоступен");
-        break;
-      default:
-        toast.error("Что-то пошло не так");
-        break;
+      toast.success("Оплата прошла успешно");
+      onSuccess();
+    } catch (e: any | AxiosError) {
+      switch (e?.response?.status) {
+        case 400:
+          toast.error("Неверные данные карты");
+          break;
+        case 404:
+          toast.error("Фильм не найден");
+          break;
+        case 503:
+          toast.error("Сервис временно недоступен");
+          break;
+        default:
+          toast.error("Сервис временно недоступен");
+          break;
+      }
     }
 
     setIsLoading(false);

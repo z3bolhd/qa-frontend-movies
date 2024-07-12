@@ -5,33 +5,35 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
 
-import { createMovie } from "@lib/api";
 import { Dialog, DialogContent, DialogTrigger } from "@components/ui/dialog";
 import { Button } from "@components/ui/button";
 
 import MovieDialogForm from "./MovieDialogForm";
 import { MovieFormSchema, movieFormSchema } from "./MovieFormSchema";
+import { MoviesService } from "@api/services";
 
 const MovieCreate = () => {
   const form = useForm<MovieFormSchema>({ resolver: zodResolver(movieFormSchema) });
 
   const queryClient = useQueryClient();
 
-  const { mutateAsync, isLoading } = useMutation({
-    mutationFn: (data: MovieFormSchema) => createMovie(data),
+  const { mutateAsync, isLoading, isError } = useMutation({
+    mutationFn: (data: MovieFormSchema) => MoviesService.createMovie({ params: data }),
   });
 
   const onSubmit: SubmitHandler<MovieFormSchema> = async (data) => {
-    const { status } = await mutateAsync(data);
-
-    if (status === 201) {
-      toast.success("Фильм успешно добавлен");
-      document.getElementById("closeDialog")?.click();
-      queryClient.refetchQueries(["movies"]);
-      return;
+    try {
+      const { status } = await mutateAsync(data);
+      if (status === 201) {
+        toast.success("Фильм успешно добавлен");
+        document.getElementById("closeDialog")?.click();
+        queryClient.refetchQueries(["movies"]);
+        return;
+      }
+      toast.error("Что-то пошло не так");
+    } catch (e) {
+      toast.error("Что-то пошло не так");
     }
-
-    toast.error("Что-то пошло не так");
   };
 
   return (
