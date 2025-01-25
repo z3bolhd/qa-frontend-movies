@@ -1,21 +1,8 @@
-import { AuthService } from "@api/services/AuthService";
+import AuthService from '@api/services/AuthService/service';
 
 const inMemoryJWTService = () => {
   let inMemoryJWT: string | null = null;
-  let refreshTimeoutId: NodeJS.Timeout | number | null = null;
-
-  const refreshToken = (expiresIn: number) => {
-    const timeoutTrigger = expiresIn - new Date().getTime();
-
-    refreshTimeoutId = setTimeout(() => {
-      AuthService.refreshTokens({})
-        .then((res) => {
-          const { accessToken, expiresIn } = res.data;
-          setToken(accessToken, expiresIn);
-        })
-        .catch(console.error);
-    }, timeoutTrigger);
-  };
+  let refreshTimeoutId: any = null;
 
   const abortRefreshToken = () => {
     if (refreshTimeoutId) {
@@ -25,15 +12,34 @@ const inMemoryJWTService = () => {
 
   const getToken = () => inMemoryJWT;
 
-  const setToken = (token: string, expiresIn: number) => {
+  function calculateTimeout(expiresIn: number): number {
+    return expiresIn - Date.now();
+  }
+
+  function refreshToken(expiresIn: number): void {
+    const timeoutDuration = calculateTimeout(expiresIn);
+
+    refreshTimeoutId = setTimeout(async () => {
+      try {
+        const { accessToken, expiresIn: newExpiresIn } = await AuthService.refreshTokens({});
+        console.log(accessToken, expiresIn);
+        // eslint-disable-next-line
+        setToken(accessToken, newExpiresIn);
+      } catch (error) {
+        console.error(error);
+      }
+    }, timeoutDuration);
+  }
+
+  function setToken(token: string, expiresIn: number): void {
     inMemoryJWT = token;
     refreshToken(expiresIn);
-  };
+  }
 
   const deleteToken = () => {
     inMemoryJWT = null;
     abortRefreshToken();
-    localStorage.setItem("logout", Date.now().toString());
+    localStorage.setItem('logout', Date.now().toString());
   };
 
   return {

@@ -1,33 +1,25 @@
-import { notFound } from "next/navigation";
-import Image from "next/image";
-import { Metadata } from "next";
+'use client';
 
-import Rating from "./_components/Rating";
+import { notFound } from 'next/navigation';
 
-import BuyTicketButton from "./_components/BuyTicketButton";
-import Reviews from "./_components/Reviews";
-import { MoviesService } from "@api/services";
+import { useQuery } from '@tanstack/react-query';
+import MoviesService from '@api/services/MoviesService/service';
+import Rating from './_components/Rating';
 
-export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
-  const { data: movie } = await MoviesService.getMovieById({ params: { id: Number(params.id) } });
+import BuyTicketButton from './_components/BuyTicketButton';
+import Reviews from './_components/Reviews';
 
-  return {
-    title: movie?.name + " | Cinescope",
-    description: movie?.description,
-    openGraph: {
-      title: movie?.name,
-      description: movie?.description,
-      images: [movie?.imageUrl || ""],
-    },
-  };
-}
+function MoviePage({ params }: { params: { id: string } }) {
+  const { data, isError } = useQuery(
+    ['movieById'],
+    () => MoviesService.getMovieById({ params: { id: Number(params.id) } }),
+  );
 
-const MoviePage = async ({ params }: { params: { id: string } }) => {
-  const response = await MoviesService.getMovieById({ params: { id: Number(params.id) } });
-
-  if (!response) {
+  if (isError) {
     notFound();
   }
+
+  if (!data) return null;
 
   const {
     id,
@@ -38,7 +30,7 @@ const MoviePage = async ({ params }: { params: { id: string } }) => {
     genre: { name: genreName },
     reviews,
     price,
-  } = response.data;
+  } = data;
 
   return (
     <main className="py-10">
@@ -46,7 +38,10 @@ const MoviePage = async ({ params }: { params: { id: string } }) => {
         <div className="w-[500px]">
           <h2 className="text-6xl">{name}</h2>
           <p className="mt-10 text-lg">{description}</p>
-          <p className="text-lg mt-5">Жанр: {genreName}</p>
+          <p className="text-lg mt-5">
+            Жанр:
+            {genreName}
+          </p>
           <Rating rating={rating} />
           <div className="mt-5">
             <BuyTicketButton movieId={id} price={price} />
@@ -54,12 +49,11 @@ const MoviePage = async ({ params }: { params: { id: string } }) => {
         </div>
         <div>
           {imageUrl ? (
-            <Image
+            <img
               src={imageUrl}
               alt={name}
               width={500}
               height={500}
-              priority
               className="w-[300px] max-w-[350px] object-cover rounded-lg"
             />
           ) : null}
@@ -68,6 +62,6 @@ const MoviePage = async ({ params }: { params: { id: string } }) => {
       <Reviews reviews={reviews} movieId={id} />
     </main>
   );
-};
+}
 
 export default MoviePage;

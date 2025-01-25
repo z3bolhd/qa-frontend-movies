@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useMutation, useQueryClient } from "react-query";
-import toast from "react-hot-toast";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import toast from 'react-hot-toast';
+import { SubmitHandler, useForm } from 'react-hook-form';
 
-import { Button } from "@components/ui/button";
+import { Button } from '@components/ui/button';
 import {
   Dialog,
   DialogClose,
@@ -13,17 +13,17 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTrigger,
-} from "@components/ui/dialog";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Label } from "@components/ui/label";
-import { Input } from "@components/ui/input";
+} from '@components/ui/dialog';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Label } from '@components/ui/label';
+import { Input } from '@components/ui/input';
 
-import LoadingSpinner from "@components/LoadingSpinner";
-import { MoviesService } from "@api/services";
+import LoadingSpinner from '@components/LoadingSpinner';
 
-import { GenreFormSchema, genreFormSchema } from "./GenreFormSchema";
+import MoviesService from '@api/services/MoviesService/service';
+import { GenreFormSchema, genreFormSchema } from './GenreFormSchema';
 
-const GenreCreate = () => {
+function GenreCreate() {
   const {
     register,
     handleSubmit,
@@ -32,25 +32,28 @@ const GenreCreate = () => {
 
   const queryClient = useQueryClient();
 
-  const { mutateAsync, isLoading } = useMutation({
-    mutationFn: (name: string) => MoviesService.createGenre({ params: { name } }),
-  });
+  const { mutateAsync: createGenre, isLoading } = useMutation(
+    ['createGenre'],
+    (name: string) => MoviesService.createGenre({ params: { name } }),
+  );
 
   const onSubmit: SubmitHandler<GenreFormSchema> = async (data) => {
-    const { status } = await mutateAsync(data.name);
+    try {
+      await createGenre(data.name);
+      toast.success('Жанр успешно создан');
+      queryClient.refetchQueries(['genres']);
+      document.getElementById('closeDialog')?.click();
+    } catch (error: any) {
+      if (error.status === 409) {
+        toast.error('Жанр с таким названием уже существует');
+        return;
+      }
 
-    if (status === 201) {
-      toast.success("Жанр успешно создан");
-      queryClient.refetchQueries(["genres"]);
-      document.getElementById("closeDialog")?.click();
-      return;
-    } else if (status === 409) {
-      toast.error("Жанр с таким названием уже существует");
-      return;
+      toast.error('Что-то пошло не так');
     }
-
-    toast.error("Что-то пошло не так");
   };
+
+  const description = 'Введите название. Кликните на кнопку "Создать" для создания.';
 
   return (
     <Dialog>
@@ -64,14 +67,14 @@ const GenreCreate = () => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <DialogHeader>Создание жанра</DialogHeader>
           <DialogDescription>
-            Введите название. Кликните на кнопку "Создать" для создания.
+            {description}
           </DialogDescription>
           <div className="mt-3">
             <Label>Название</Label>
             <Input
               id="name"
               type="text"
-              {...register("name", { required: true })}
+              {...register('name', { required: true })}
               data-qa-id="genre_create_name_input"
             />
             {errors.name && <p className="mt-1 text-sm text-red-500">{errors.name.message}</p>}
@@ -83,7 +86,7 @@ const GenreCreate = () => {
               disabled={isLoading}
               data-qa-id="genre_create_submit_button"
             >
-              {isLoading ? <LoadingSpinner size={16} /> : "Создать"}
+              {isLoading ? <LoadingSpinner size={16} /> : 'Создать'}
             </Button>
             <DialogClose id="closeDialog" />
           </DialogFooter>
@@ -91,6 +94,6 @@ const GenreCreate = () => {
       </DialogContent>
     </Dialog>
   );
-};
+}
 
 export default GenreCreate;

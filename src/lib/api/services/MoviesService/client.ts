@@ -1,8 +1,8 @@
-import { BACKEND_URL_MOVIES } from "@lib/consts";
-import inMemoryJWT from "@lib/inMemoryJWT";
-import axios from "axios";
+import { BACKEND_URL_MOVIES } from '@lib/consts';
+import inMemoryJWT from '@lib/inMemoryJWT';
+import axios from 'axios';
 
-export const MoviesClient = axios.create({
+const MoviesClient = axios.create({
   baseURL: BACKEND_URL_MOVIES,
 });
 
@@ -11,10 +11,12 @@ MoviesClient.interceptors.request.use(
     const accessToken = inMemoryJWT.getToken();
 
     if (accessToken) {
-      config.headers["Authorization"] = `Bearer ${accessToken}`;
+      config.headers.Authorization = `Bearer ${accessToken}`;
     }
 
     return config;
   },
   (error) => Promise.reject(error),
 );
+
+export default MoviesClient;

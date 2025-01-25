@@ -1,24 +1,24 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { SubmitHandler, useForm } from "react-hook-form";
-import toast from "react-hot-toast";
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { SubmitHandler, useForm } from 'react-hook-form';
 
-import { Button } from "@components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader } from "@components/ui/card";
-import { Input } from "@components/ui/input";
-import { Label } from "@components/ui/label";
-import useSession from "@hooks/useSession";
-import { AuthStatus } from "@lib/types";
+import { Button } from '@components/ui/button';
+import {
+  Card, CardContent, CardFooter, CardHeader,
+} from '@components/ui/card';
+import { Input } from '@components/ui/input';
+import { Label } from '@components/ui/label';
+import useSession from '@hooks/useSession';
 
 interface LoginInput {
   email: string;
   password: string;
 }
 
-const LoginForm = () => {
+function LoginForm() {
   const { signIn, isLogged } = useSession();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -30,28 +30,14 @@ const LoginForm = () => {
 
   const onSubmit: SubmitHandler<LoginInput> = async (data) => {
     setIsLoading(true);
-    const { status } = await signIn(data);
-
-    switch (status) {
-      case AuthStatus.UNAUTHORIZED:
-        toast.error("Неверная почта или пароль");
-        break;
-      case AuthStatus.FORBIDDEN:
-        toast.error("У вас нет доступа к ресурсу");
-        break;
-      case AuthStatus.OK:
-        toast.success("Вы вошли в аккаунт");
-        break;
-      default:
-        toast.error("Что-то пошло не так");
-    }
+    await signIn(data);
 
     setIsLoading(false);
   };
 
   useEffect(() => {
     if (isLogged) {
-      router.push("/");
+      router.push('/');
     }
   }, [isLogged, router]);
 
@@ -70,7 +56,7 @@ const LoginForm = () => {
               placeholder="Email"
               className="w-full"
               data-qa-id="login_email_input"
-              {...register("email", {
+              {...register('email', {
                 required: true,
               })}
             />
@@ -86,7 +72,7 @@ const LoginForm = () => {
               placeholder="Пароль"
               className="w-full"
               data-qa-id="login_password_input"
-              {...register("password", {
+              {...register('password', {
                 required: true,
               })}
             />
@@ -107,8 +93,9 @@ const LoginForm = () => {
 
           <div className="mt-5 text-center">
             <p>
-              Нет аккаунта?{" "}
-              <Link href={"/register"} className="text-blue-500 underline">
+              Нет аккаунта?
+              {' '}
+              <Link href="/register" className="text-blue-500 underline">
                 Зарегистрироваться
               </Link>
             </p>
@@ -117,6 +104,6 @@ const LoginForm = () => {
       </form>
     </Card>
   );
-};
+}
 
 export default LoginForm;

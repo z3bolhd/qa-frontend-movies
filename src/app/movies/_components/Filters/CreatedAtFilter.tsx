@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Select,
@@ -6,21 +6,21 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@components/ui/select";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+} from '@components/ui/select';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useState } from 'react';
 
-const CreatedAtFilter = () => {
+function CreatedAtFilter() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
 
-  const [createdAtParam, setCreatedAtParam] = useState<string>(searchParams.get("createdAt") || "");
+  const [createdAtParam, setCreatedAtParam] = useState<string>(searchParams.get('createdAt') || '');
 
   const handleChange = (value: string) => {
     const params = new URLSearchParams(searchParams.toString());
-    params.set("createdAt", value);
-    params.set("page", "1");
+    params.set('createdAt', value);
+    params.set('page', '1');
     const newParams = params.toString();
 
     setCreatedAtParam(value);
@@ -41,6 +41,6 @@ const CreatedAtFilter = () => {
       </Select>
     </div>
   );
-};
+}
 
 export default CreatedAtFilter;

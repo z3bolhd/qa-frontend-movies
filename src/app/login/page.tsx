@@ -1,11 +1,11 @@
-import LoginForm from "./_components/LoginForm";
+import LoginForm from './_components/LoginForm';
 
-const LoginPage = () => {
+function LoginPage() {
   return (
     <div className="w-full mt-36">
       <LoginForm />
     </div>
   );
-};
+}
 
 export default LoginPage;

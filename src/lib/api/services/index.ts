@@ -1,1 +1,1 @@
-export { MoviesService } from "./MoviesService";
+export * as MovieService from './MoviesService';

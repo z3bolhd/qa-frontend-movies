@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   flexRender,
@@ -6,9 +6,8 @@ import {
   getFilteredRowModel,
   getSortedRowModel,
   useReactTable,
-} from "@tanstack/react-table";
+} from '@tanstack/react-table';
 
-import { Genre } from "@lib/types";
 import {
   Table,
   TableBody,
@@ -16,15 +15,22 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@components/ui/table";
+} from '@components/ui/table';
 
-import columns from "./columns";
+import { useQuery } from '@tanstack/react-query';
+import MoviesService from '@api/services/MoviesService/service';
+import LoadingSpinner from '@components/LoadingSpinner';
+import columns from './columns';
 
-interface GenresTableProps {
-  genres: Genre[];
-}
+function GenresTable() {
+  const { data: genres, isLoading, isError } = useQuery(
+    ['genres'],
+    () => MoviesService.getGenres({}),
+    {
+      initialData: [],
+    },
+  );
 
-const GenresTable = ({ genres }: GenresTableProps) => {
   const table = useReactTable({
     data: genres,
     columns,
@@ -34,21 +40,31 @@ const GenresTable = ({ genres }: GenresTableProps) => {
     rowCount: genres.length,
   });
 
+  if (isLoading) {
+    return (
+      <div className="mt-36">
+        <LoadingSpinner size={50} />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return <p className="text-xl mt-36">Что-то пошло не так</p>;
+  }
+
   return (
     <div className="rounded-md border mt-5">
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id} className="hover:bg-transparent">
-              {headerGroup.headers.map((header) => {
-                return (
-                  <TableHead key={header.id} className="text-white bg-transparent">
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(header.column.columnDef.header, header.getContext())}
-                  </TableHead>
-                );
-              })}
+              {headerGroup.headers.map((header) => (
+                <TableHead key={header.id} className="text-white bg-transparent">
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(header.column.columnDef.header, header.getContext())}
+                </TableHead>
+              ))}
             </TableRow>
           ))}
         </TableHeader>
@@ -75,6 +91,6 @@ const GenresTable = ({ genres }: GenresTableProps) => {
       </Table>
     </div>
   );
-};
+}
 
 export default GenresTable;

@@ -1,19 +1,87 @@
-"use client";
+'use client';
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@components/ui/card";
-import { Movie } from "@lib/types";
-import PaymentForm from "./PaymentForm";
-import { useState } from "react";
-import PaymentSuccessCard from "./PaymentSuccessCard";
+import {
+  Card, CardContent, CardDescription, CardHeader, CardTitle,
+} from '@components/ui/card';
+import { useContext } from 'react';
+import { notFound, useRouter, useSearchParams } from 'next/navigation';
+import { AuthContext } from '@context/AuthProvider';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import MoviesService from '@api/services/MoviesService/service';
+import LoadingSpinner from '@components/LoadingSpinner';
+import PaymentService from '@api/services/PaymentService/service';
+import { SubmitHandler } from 'react-hook-form';
+import { PaymentFormSchema } from '@app/payment/components/PaymentFormSchema';
+import toast from 'react-hot-toast';
+import PaymentForm from './PaymentForm';
+import PaymentSuccessCard from './PaymentSuccessCard';
 
-interface PaymentCardProps extends Movie {}
+function PaymentCard() {
+  const searchParams = useSearchParams();
+  const { isLogged, session } = useContext(AuthContext);
+  const router = useRouter();
 
-const PaymentCard = ({ name, id, price }: PaymentCardProps) => {
-  const [isSuccess, setIsSuccess] = useState(false);
+  const {
+    data: movie, isError, isFetching,
+  } = useQuery(['movieById'], () => MoviesService.getMovieById({
+    params: {
+      id: Number(searchParams.get('movieId')),
+    },
+  }));
 
-  const onSuccess = () => {
-    setIsSuccess(true);
+  const { mutateAsync: createPayment, isLoading, isSuccess } = useMutation(['createPayment'], PaymentService.createPayment);
+
+  const onSubmit: SubmitHandler<PaymentFormSchema> = async (data) => {
+    const expirationDate = `${data.card.expirationMonth}/${data.card.expirationYear}`;
+
+    try {
+      await createPayment({
+        params: {
+          movieId: movie?.id || 0,
+          amount: data.amount,
+          card: {
+            ...data.card,
+            expirationDate,
+          },
+        },
+      });
+
+      toast.success('Оплата прошла успешно');
+    } catch (e: any) {
+      switch (e?.response?.status) {
+        case 400:
+          toast.error('Неверные данные карты');
+          break;
+        case 404:
+          toast.error('Фильм не найден');
+          break;
+        case 503:
+          toast.error('Сервис временно недоступен');
+          break;
+        default:
+          toast.error('Сервис временно недоступен');
+          break;
+      }
+    }
   };
+
+  if (!isLogged && !session) {
+    router.push('/login');
+  }
+
+  if (isError) {
+    notFound();
+  }
+
+  if (isFetching) {
+    return (
+      <LoadingSpinner className="mt-[100px]" size={50} />
+    );
+  }
+
+  if (!movie) return null;
+
+  const { name, price } = movie;
 
   if (isSuccess) {
     return <PaymentSuccessCard />;
@@ -26,10 +94,10 @@ const PaymentCard = ({ name, id, price }: PaymentCardProps) => {
         <CardDescription className="text-base">{name}</CardDescription>
       </CardHeader>
       <CardContent>
-        <PaymentForm movieId={id} price={price} onSuccess={onSuccess} />
+        <PaymentForm isLoading={isLoading} price={price} onSubmit={onSubmit} />
       </CardContent>
     </Card>
   );
-};
+}
 
 export default PaymentCard;

@@ -1,12 +1,12 @@
 export enum Role {
-  USER = "USER",
-  ADMIN = "ADMIN",
-  SUPER_ADMIN = "SUPER_ADMIN",
+  USER = 'USER',
+  ADMIN = 'ADMIN',
+  SUPER_ADMIN = 'SUPER_ADMIN',
 }
 
 export enum Location {
-  SPB = "SPB",
-  MSK = "MSK",
+  SPB = 'SPB',
+  MSK = 'MSK',
 }
 
 export type User = {
@@ -19,20 +19,9 @@ export type User = {
   createdAt?: Date;
 };
 
-export enum AuthStatus {
-  OK = "ok",
-  ERROR = "error",
-  FORBIDDEN = "forbidden",
-  UNAUTHORIZED = "unauthorized",
-}
-
 export type SignInRequest = {
   email: string;
   password: string;
-};
-
-export type SignInResponse = {
-  status: AuthStatus;
 };
 
 export type LoginResponse = {
@@ -47,7 +36,12 @@ export type Review = {
   rating: number;
   createdAt: Date;
   hidden: boolean;
-  user: Pick<User, "fullName">;
+  user: Pick<User, 'fullName'>;
+};
+
+export type Genre = {
+  id: number;
+  name: string;
 };
 
 export type Movie = {
@@ -59,15 +53,10 @@ export type Movie = {
   price: number;
   published: boolean;
   genreId: number;
-  genre: Pick<Genre, "name">;
+  genre: Pick<Genre, 'name'>;
   createdAt: Date;
   rating: number;
   reviews?: Review[];
-};
-
-export type Genre = {
-  id: number;
-  name: string;
 };
 
 export interface GetMoviesResponse {
@@ -115,7 +104,7 @@ export type Payment = {
 export interface GetPaymentsParams {
   page?: number | string;
   pageSize?: number | string;
-  createdAt?: "desc" | "asc";
+  createdAt?: 'desc' | 'asc';
   status?: string;
 }
 

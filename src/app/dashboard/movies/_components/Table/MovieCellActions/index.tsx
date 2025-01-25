@@ -1,26 +1,26 @@
-"use client";
+'use client';
 
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@components/ui/dropdown-menu";
-import { useState } from "react";
-import { Row } from "@tanstack/react-table";
-import { MoreHorizontal } from "lucide-react";
+} from '@components/ui/dropdown-menu';
+import { useState } from 'react';
+import { Row } from '@tanstack/react-table';
+import { MoreHorizontal } from 'lucide-react';
 
-import { Dialog, DialogContent, DialogTrigger } from "@components/ui/dialog";
+import { Dialog, DialogContent, DialogTrigger } from '@components/ui/dialog';
 
-import { Movie } from "@lib/types";
-import MovieCellEdit from "./MovieCellEdit";
-import MovieCellDelete from "./MovieCellDelete";
+import { Movie } from '@lib/types';
+import MovieCellEdit from './MovieCellEdit';
+import MovieCellDelete from './MovieCellDelete';
 
 interface MovieCellActionsProps {
   row: Row<Movie>;
 }
 
-const MovieCellActions = ({ row }: MovieCellActionsProps) => {
+function MovieCellActions({ row }: MovieCellActionsProps) {
   const [dialog, setDialog] = useState<string | undefined>();
 
   const movie = row.original;
@@ -35,12 +35,12 @@ const MovieCellActions = ({ row }: MovieCellActionsProps) => {
           <MoreHorizontal className="h-4 w-4" />
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DialogTrigger asChild onClick={() => setDialog("edit")}>
+          <DialogTrigger asChild onClick={() => setDialog('edit')}>
             <DropdownMenuItem className="cursor-pointer" data-qa-id="movie_action_edit_button">
               Изменить
             </DropdownMenuItem>
           </DialogTrigger>
-          <DialogTrigger asChild onClick={() => setDialog("delete")}>
+          <DialogTrigger asChild onClick={() => setDialog('delete')}>
             <DropdownMenuItem className="cursor-pointer" data-qa-id="movie_action_delete_button">
               Удалить
             </DropdownMenuItem>
@@ -49,11 +49,11 @@ const MovieCellActions = ({ row }: MovieCellActionsProps) => {
       </DropdownMenu>
 
       <DialogContent>
-        {dialog === "edit" && <MovieCellEdit {...movie} />}
-        {dialog === "delete" && <MovieCellDelete {...movie} />}
+        {dialog === 'edit' && <MovieCellEdit {...movie} />}
+        {dialog === 'delete' && <MovieCellDelete {...movie} />}
       </DialogContent>
     </Dialog>
   );
-};
+}
 
 export default MovieCellActions;

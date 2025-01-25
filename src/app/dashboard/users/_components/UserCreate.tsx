@@ -1,38 +1,40 @@
-"use client";
+'use client';
 
-import { SubmitHandler, useForm } from "react-hook-form";
-import { useMutation, useQueryClient } from "react-query";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Dialog, DialogContent, DialogTrigger } from "@components/ui/dialog";
-import toast from "react-hot-toast";
-import { Button } from "@components/ui/button";
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Dialog, DialogContent, DialogTrigger } from '@components/ui/dialog';
+import toast from 'react-hot-toast';
+import { Button } from '@components/ui/button';
 
-import UserDialogForm from "./UserDialogForm";
-import { UserFormSchema, userFormSchema } from "./UserFormSchema";
-import { AuthService } from "@api/services/AuthService";
+import AuthService from '@api/services/AuthService/service';
+import UserDialogForm from './UserDialogForm';
+import { UserFormSchema, userFormSchema } from './UserFormSchema';
 
-const UserCreate = () => {
+function UserCreate() {
   const form = useForm<UserFormSchema>({
     resolver: zodResolver(userFormSchema),
   });
 
   const queryClient = useQueryClient();
-  const { mutateAsync, isLoading } = useMutation({
-    mutationFn: (data: UserFormSchema) =>
-      AuthService.createUser({ params: { ...data, password: data.password! } }),
-  });
+  const { mutateAsync, isLoading } = useMutation(
+    ['createUser'],
+    (data: UserFormSchema) => AuthService.createUser({
+      params: { ...data, password: data.password! },
+    }),
+  );
 
   const onSubmit: SubmitHandler<UserFormSchema> = async (data) => {
-    const { status } = await mutateAsync(data);
+    try {
+      await mutateAsync(data);
+      toast.success('Пользователь успешно создан');
+      document.getElementById('closeDialog')?.click();
+      queryClient.refetchQueries(['users']);
+    } catch (error) {
+      console.log(error);
 
-    if (status === 201) {
-      toast.success("Пользователь успешно создан");
-      document.getElementById("closeDialog")?.click();
-      queryClient.refetchQueries(["users"]);
-      return;
+      toast.error('Что-то пошло не так');
     }
-
-    toast.error("Что-то пошло не так");
   };
 
   return (
@@ -49,7 +51,7 @@ const UserCreate = () => {
       <DialogContent>
         <UserDialogForm
           title="Создания пользователя"
-          description={`Внесите данные пользователя. Кликните на кнопку "Создать" для добавления.`}
+          description={'Внесите данные пользователя. Кликните на кнопку "Создать" для добавления.'}
           footerButtonText="Создать"
           {...form}
           errors={form.formState.errors}
@@ -60,6 +62,6 @@ const UserCreate = () => {
       </DialogContent>
     </Dialog>
   );
-};
+}
 
 export default UserCreate;

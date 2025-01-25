@@ -1,23 +1,32 @@
-import Link from "next/link";
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart } from 'lucide-react';
 
-import { Button } from "@components/ui/button";
+import { Button } from '@components/ui/button';
+import { useContext } from 'react';
+import { AuthContext } from '@context/AuthProvider';
+import { useRouter } from 'next/navigation';
 
 interface BuyTicketButtonProps {
   movieId: number;
   price: number;
 }
 
-const BuyTicketButton = ({ movieId, price }: BuyTicketButtonProps) => {
+function BuyTicketButton({ movieId, price }: BuyTicketButtonProps) {
+  const { isLogged } = useContext(AuthContext);
+  const router = useRouter();
+
+  const onClick = () => {
+    router.push(isLogged ? `/payment?movieId=${movieId}` : '/login');
+  };
+
+  const priceText = `${price} руб.`;
+
   return (
-    <Link href={`/payment?movieId=${movieId}`} data-qa-id="movie_buy_ticket_button">
-      <Button className="gap-3 bg-blue-500 hover:bg-blue-600 w-fit" type="button">
-        <ShoppingCart className="h-4 w-4" />
-        <p>Купить билет</p>
-        <p>{price} руб.</p>
-      </Button>
-    </Link>
+    <Button className="gap-3 bg-blue-500 hover:bg-blue-600 w-fit" onClick={onClick} type="button">
+      <ShoppingCart className="h-4 w-4" />
+      <p>Купить билет</p>
+      <p>{priceText}</p>
+    </Button>
   );
-};
+}
 
 export default BuyTicketButton;

@@ -1,24 +1,24 @@
-"use client";
+'use client';
 
-import { useRouter } from "next/navigation";
-import toast from "react-hot-toast";
+import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
 
-import { Review, Role } from "@lib/types";
+import { Review, Role } from '@lib/types';
 
-import ReviewCard from "./ReviewCard";
-import PersonalReview from "./PersonalReview";
-import ReviewActions from "./ReviewActions";
-import useSession from "@hooks/useSession";
-import { MoviesService } from "@api/services";
+import useSession from '@hooks/useSession';
+
+import MoviesService from '@api/services/MoviesService/service';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import ReviewCard from './ReviewCard';
+import PersonalReview from './PersonalReview';
+import ReviewActions from './ReviewActions';
 
 interface ReviewsProps {
   reviews: Review[];
   movieId: number;
 }
 
-const Reviews = ({ reviews, movieId }: ReviewsProps) => {
-  const router = useRouter();
-
+function Reviews({ reviews, movieId }: ReviewsProps) {
   const { session, isLogged } = useSession();
   const isAdmin = isLogged && session?.roles.indexOf(Role.ADMIN) !== -1;
 
@@ -27,40 +27,46 @@ const Reviews = ({ reviews, movieId }: ReviewsProps) => {
   const shownReviews = reviews?.filter((review) => review.userId !== session?.id && !review.hidden);
   const hiddenReviews = reviews?.filter((review) => review.userId !== session?.id && review.hidden);
 
+  const { mutateAsync: deleteReview } = useMutation(['deleteReview'], MoviesService.deleteReviewByUserId);
+  const { mutateAsync: showReview } = useMutation(['showReview'], MoviesService.showReviewByUserId);
+  const { mutateAsync: hideReview } = useMutation(['hideReview'], MoviesService.hideReviewByUserId);
+
+  const queryClient = useQueryClient();
+
   const handleDelete = async (userId: string) => {
-    const { status } = await MoviesService.deleteReviewByUserId({ params: { movieId, userId } });
+    const { status } = await deleteReview({ params: { movieId, userId } });
 
     if (status !== 200) {
-      toast.error("Произошла ошибка");
+      toast.error('Произошла ошибка');
       return;
     }
 
-    toast.success("Отзыв успешно удален");
-    router.refresh();
+    toast.success('Отзыв успешно удален');
+    queryClient.refetchQueries(['movieById']);
   };
 
   const handleShow = async (userId: string) => {
-    const { status } = await MoviesService.showReviewByUserId({ params: { movieId, userId } });
+    const { status } = await showReview({ params: { movieId, userId } });
 
     if (status !== 200) {
-      toast.error("Произошла ошибка");
+      toast.error('Произошла ошибка');
       return;
     }
 
-    toast.success("Отзыв успешно отображен");
-    router.refresh();
+    toast.success('Отзыв успешно отображен');
+    queryClient.refetchQueries(['movieById']);
   };
 
   const handleHide = async (userId: string) => {
-    const { status } = await MoviesService.hideReviewByUserId({ params: { movieId, userId } });
+    const { status } = await hideReview({ params: { movieId, userId } });
 
     if (status !== 200) {
-      toast.error("Произошла ошибка");
+      toast.error('Произошла ошибка');
       return;
     }
 
-    toast.success("Отзыв успешно скрыт");
-    router.refresh();
+    toast.success('Отзыв успешно скрыт');
+    queryClient.refetchQueries(['movieById']);
   };
 
   return (
@@ -101,14 +107,14 @@ const Reviews = ({ reviews, movieId }: ReviewsProps) => {
                 <li key={review.userId}>
                   <ReviewCard
                     {...review}
-                    actions={
+                    actions={(
                       <ReviewActions
                         hidden={review.hidden}
                         handleDelete={() => handleDelete(review.userId)}
                         handleHide={() => handleHide(review.userId)}
                         handleShow={() => handleShow(review.userId)}
                       />
-                    }
+                    )}
                   />
                 </li>
               ))
@@ -120,6 +126,6 @@ const Reviews = ({ reviews, movieId }: ReviewsProps) => {
       ) : null}
     </div>
   );
-};
+}
 
 export default Reviews;

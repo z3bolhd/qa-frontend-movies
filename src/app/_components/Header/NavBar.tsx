@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import useSession from "@hooks/useSession";
-import { Role } from "@lib/types";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import useSession from '@hooks/useSession';
+import { Role } from '@lib/types';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
-const NavBar = () => {
+function NavBar() {
   const pathname = usePathname();
   const { session } = useSession();
   const isAdmin = session?.roles.includes(Role.ADMIN);
-  const isDashboardPage = pathname.includes("/dashboard");
-  const isProfilePage = pathname.includes("/profile");
+  const isDashboardPage = pathname.includes('/dashboard');
+  const isProfilePage = pathname.includes('/profile');
 
   return (
     <nav className="ml-10 flex items-center">
@@ -19,7 +19,7 @@ const NavBar = () => {
           {isDashboardPage ? (
             <Link href="/">Вернуться на главную</Link>
           ) : (
-            <Link href="/movies">Все фильмы</Link>
+            <Link href="/movies?page=1">Все фильмы</Link>
           )}
         </li>
         {isAdmin && isProfilePage && (
@@ -30,6 +30,6 @@ const NavBar = () => {
       </ul>
     </nav>
   );
-};
+}
 
 export default NavBar;

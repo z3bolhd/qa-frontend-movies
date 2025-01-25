@@ -1,8 +1,6 @@
-import queryString from "query-string";
-
-import { AxiosCustomRequestConfig } from "@api/types";
-import { MoviesClient } from "../../client";
-import { GetMoviesResponse } from "@lib/types";
+import { AxiosCustomRequestConfig } from '@api/types';
+import { GetMoviesResponse } from '@lib/types';
+import MoviesClient from '@api/services/MoviesService/client';
 
 export interface GetMoviesParams {
   page?: number | string;
@@ -15,8 +13,8 @@ export interface GetMoviesParams {
 
 export type GetMoviesConfig = AxiosCustomRequestConfig<GetMoviesParams>;
 
-export const getMovies = async ({ params, config }: GetMoviesConfig) =>
-  MoviesClient.get<GetMoviesResponse>(
-    "/movies?" + queryString.stringify(params, { skipNull: true }),
-    config,
-  );
+export const getMovies = async ({ params, config }: GetMoviesConfig) => {
+  const response = await MoviesClient.get<GetMoviesResponse>('/movies', { params, ...config });
+
+  return response.data;
+};

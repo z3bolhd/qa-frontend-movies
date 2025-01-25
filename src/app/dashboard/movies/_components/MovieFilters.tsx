@@ -1,7 +1,4 @@
-"use client";
-
-import { Dispatch, useContext } from "react";
-import { Updater } from "@tanstack/react-table";
+'use client';
 
 import {
   Select,
@@ -9,39 +6,37 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@components/ui/select";
+} from '@components/ui/select';
 
-import { GetMoviesParams } from "@lib/types";
+import {
+  usePathname, useRouter, useSearchParams,
+} from 'next/navigation';
 
-interface MovieFiltersProps {
-  setFilters: Dispatch<Updater<GetMoviesParams>>;
-}
+function MovieFilters() {
+  const pathname = usePathname();
+  const router = useRouter();
+  const params = useSearchParams();
 
-const MovieFilters = ({ setFilters }: MovieFiltersProps) => {
-  const onPublishedValueChange = (value: string) => {
-    const published = !!Number(value);
+  const updateParam = (name: string, value: string) => {
+    const updatedParams = new URLSearchParams(params.toString());
+    updatedParams.set('page', '1');
+    updatedParams.set(name, String(value));
 
-    setFilters((prev) => ({ ...prev, published, page: 1 }));
-  };
-
-  const onCreatedAtValueChange = (value: string) => {
-    const createdAt = value;
-
-    setFilters((prev) => ({ ...prev, createdAt, page: 1 }));
+    router.push(`${pathname}?${updatedParams.toString()}`);
   };
 
   return (
     <ul className="mr-5 flex gap-5">
       <li>
-        <Select onValueChange={onPublishedValueChange}>
+        <Select onValueChange={(value) => updateParam('published', value)} defaultValue="true">
           <SelectTrigger data-qa-id="movie_filter_published_select">
             <SelectValue placeholder="Опубликован" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value={"1"} className="cursor-pointer">
+            <SelectItem value="true" className="cursor-pointer">
               Опубликованы
             </SelectItem>
-            <SelectItem value={"0"} className="cursor-pointer">
+            <SelectItem value="false" className="cursor-pointer">
               Не публикованы
             </SelectItem>
           </SelectContent>
@@ -49,15 +44,15 @@ const MovieFilters = ({ setFilters }: MovieFiltersProps) => {
       </li>
 
       <li>
-        <Select onValueChange={onCreatedAtValueChange}>
+        <Select onValueChange={(value) => updateParam('createdAt', value)}>
           <SelectTrigger data-qa-id="movie_filter_created_at_select">
             <SelectValue placeholder="Создано" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value={"desc"} className="cursor-pointer">
+            <SelectItem value="desc" className="cursor-pointer">
               Новые
             </SelectItem>
-            <SelectItem value={"asc"} className="cursor-pointer">
+            <SelectItem value="asc" className="cursor-pointer">
               Старые
             </SelectItem>
           </SelectContent>
@@ -65,6 +60,6 @@ const MovieFilters = ({ setFilters }: MovieFiltersProps) => {
       </li>
     </ul>
   );
-};
+}
 
 export default MovieFilters;

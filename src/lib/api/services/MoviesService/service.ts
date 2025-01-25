@@ -1,9 +1,11 @@
-import * as movieRequests from "./requests/movies";
-import * as genreRequests from "./requests/genres";
-import * as reviewRequests from "./requests/reviews";
+import * as movieRequests from './requests/movies';
+import * as genreRequests from './requests/genres';
+import * as reviewRequests from './requests/reviews';
 
-export const MoviesService = {
+const MoviesService = {
   ...movieRequests,
   ...genreRequests,
   ...reviewRequests,
 };
+
+export default MoviesService;

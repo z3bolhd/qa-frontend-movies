@@ -1,6 +1,6 @@
-import { AxiosCustomRequestConfig } from "@api/types";
-import { MoviesClient } from "../../client";
-import { Genre } from "@lib/types";
+import { AxiosCustomRequestConfig } from '@api/types';
+import { Genre } from '@lib/types';
+import MoviesClient from '@api/services/MoviesService/client';
 
 export interface GetGenreByIdParams {
   id: string;
@@ -8,5 +8,8 @@ export interface GetGenreByIdParams {
 
 export type GetGenreByIdConfig = AxiosCustomRequestConfig<GetGenreByIdParams>;
 
-export const getGenreById = async ({ params, config }: GetGenreByIdConfig) =>
-  MoviesClient.get<Genre>(`/genres/${params.id}`, config);
+export const getGenreById = async ({ params, config }: GetGenreByIdConfig) => {
+  const response = await MoviesClient.get<Genre>(`/genres/${params.id}`, config);
+
+  return response.data;
+};

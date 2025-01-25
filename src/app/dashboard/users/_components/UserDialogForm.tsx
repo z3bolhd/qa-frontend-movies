@@ -1,31 +1,33 @@
-"use client";
+'use client';
 
-import { Control, Controller, FieldErrors, SubmitHandler, UseFormRegister } from "react-hook-form";
+import {
+  Control, Controller, FieldErrors, SubmitHandler, UseFormRegister,
+} from 'react-hook-form';
 
-import LoadingSpinner from "@components/LoadingSpinner";
-import { Button } from "@components/ui/button";
-import { Checkbox } from "@components/ui/checkbox";
+import LoadingSpinner from '@components/LoadingSpinner';
+import { Button } from '@components/ui/button';
+import { Checkbox } from '@components/ui/checkbox';
 import {
   DialogClose,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@components/ui/dialog";
-import { Input } from "@components/ui/input";
-import { Label } from "@components/ui/label";
+} from '@components/ui/dialog';
+import { Input } from '@components/ui/input';
+import { Label } from '@components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@components/ui/select";
+} from '@components/ui/select';
 
-import { Role, User } from "@lib/types";
+import { Role, User } from '@lib/types';
 
-import { UserFormSchema } from "./UserFormSchema";
-import useSession from "@hooks/useSession";
+import useSession from '@hooks/useSession';
+import { UserFormSchema } from './UserFormSchema';
 
 interface UserDialogFormProps {
   title: string;
@@ -41,7 +43,7 @@ interface UserDialogFormProps {
   isLoading: boolean;
 }
 
-const UserDialogForm = ({
+function UserDialogForm({
   title,
   description,
   isCreate,
@@ -53,7 +55,7 @@ const UserDialogForm = ({
   errors,
   control,
   isLoading,
-}: UserDialogFormProps) => {
+}: UserDialogFormProps) {
   const { session } = useSession();
   const roles = Object.values(Role);
   const inputRoles = session?.roles.includes(Role.SUPER_ADMIN)
@@ -73,7 +75,7 @@ const UserDialogForm = ({
           disabled={!isCreate}
           type="text"
           data-qa-id="user_full_name_input"
-          {...register("fullName", { value: user?.fullName || "", required: true, minLength: 1 })}
+          {...register('fullName', { value: user?.fullName || '', required: true, minLength: 1 })}
         />
         {errors.fullName && (
           <p className="mt-1 text-red-500 text-sm">{errors.fullName.message as string}</p>
@@ -86,7 +88,7 @@ const UserDialogForm = ({
           type="email"
           disabled={!isCreate}
           data-qa-id="user_email_input"
-          {...register("email", { value: user?.email || "", required: true, minLength: 1 })}
+          {...register('email', { value: user?.email || '', required: true, minLength: 1 })}
         />
         {errors.email && (
           <p className="mt-1 text-red-500 text-sm">{errors.email.message as string}</p>
@@ -101,7 +103,7 @@ const UserDialogForm = ({
             defaultValue=""
             type="password"
             data-qa-id="user_password_input"
-            {...register("password", { required: true, minLength: 1 })}
+            {...register('password', { required: true, minLength: 1 })}
           />
           {errors.email && (
             <p className="mt-1 text-red-500 text-sm">{errors.email.message as string}</p>
@@ -156,7 +158,7 @@ const UserDialogForm = ({
                 onCheckedChange={() => field.onChange(!field.value)}
                 disabled={user?.roles.includes(Role.SUPER_ADMIN) && user.verified}
                 data-qa-id="user_verified_checkbox"
-                {...register("verified")}
+                {...register('verified')}
               />
 
               <Label htmlFor="verified" className="ml-2">
@@ -183,7 +185,7 @@ const UserDialogForm = ({
                 onCheckedChange={() => field.onChange(!field.value)}
                 disabled={user?.roles.includes(Role.SUPER_ADMIN)}
                 data-qa-id="user_banned_checkbox"
-                {...register("banned")}
+                {...register('banned')}
               />
 
               <Label htmlFor="banned" className="ml-2">
@@ -209,6 +211,6 @@ const UserDialogForm = ({
       </DialogFooter>
     </form>
   );
-};
+}
 
 export default UserDialogForm;

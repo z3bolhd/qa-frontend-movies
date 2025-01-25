@@ -1,17 +1,21 @@
-import { Card, CardContent, CardHeader } from "@components/ui/card";
+import { ReactNode } from 'react';
 
-import { Review } from "@lib/types";
-import { cn } from "@lib/utils";
+import { Card, CardContent, CardHeader } from '@components/ui/card';
 
-import Rating from "../Rating";
+import { Review } from '@lib/types';
+import { cn } from '@lib/utils';
+
+import Rating from '../Rating';
 
 interface ReviewCardProps extends Review {
-  actions?: React.ReactNode;
+  actions?: ReactNode;
 }
 
-const ReviewCard = ({ actions, hidden, rating, text, user: { fullName } }: ReviewCardProps) => {
+function ReviewCard({
+  actions, hidden, rating, text, user: { fullName },
+}: ReviewCardProps) {
   return (
-    <Card className={cn("w-full", hidden && "bg-gray-100")}>
+    <Card className={cn('w-full', hidden && 'bg-gray-100')}>
       <CardHeader>
         <div className="w-full flex justify-between">
           <h4 className="text-xl w-fit">{fullName}</h4>
@@ -24,6 +28,6 @@ const ReviewCard = ({ actions, hidden, rating, text, user: { fullName } }: Revie
       </CardContent>
     </Card>
   );
-};
+}
 
 export default ReviewCard;

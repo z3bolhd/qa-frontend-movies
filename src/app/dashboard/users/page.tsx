@@ -1,27 +1,41 @@
-"use client";
+'use client';
 
-import UsersTable from "./_components/Table";
-import UserCreate from "./_components/UserCreate";
+import { useQuery } from '@tanstack/react-query';
 
-import { useQuery } from "react-query";
+import { useState } from 'react';
+import { GetUsersParams } from '@lib/types';
+import LoadingSpinner from '@components/LoadingSpinner';
 
-import { useState } from "react";
-import { GetUsersParams } from "@lib/types";
-import LoadingSpinner from "@components/LoadingSpinner";
-import { AuthService } from "@api/services/AuthService";
+import AuthService from '@api/services/AuthService/service';
+import UserCreate from './_components/UserCreate';
+import UsersTable from './_components/Table';
 
-const DashboardUsersPage = () => {
+function DashboardUsersPage() {
   const [userFilters, setUserFilters] = useState<GetUsersParams>({
-    createdAt: "desc",
+    createdAt: 'desc',
   });
 
-  const { data, isLoading, isError, status } = useQuery(["users", userFilters], () =>
-    AuthService.getUsers({ params: userFilters }),
-  );
+  const {
+    data, isLoading, isError,
+  } = useQuery(['users', userFilters], () => AuthService.getUsers({ params: userFilters }));
 
   if (isError && !isLoading && !data) {
     return <p className="text-xl mt-36">Что-то пошло не так</p>;
   }
+
+  const renderContent = () => {
+    if (isLoading) {
+      return (
+        <div className="mt-36">
+          <LoadingSpinner size={50} />
+        </div>
+      );
+    }
+
+    return (
+      <UsersTable usersResponse={data} setFilters={setUserFilters} />
+    );
+  };
 
   return (
     <div>
@@ -29,15 +43,9 @@ const DashboardUsersPage = () => {
         <h2 className="text-4xl">Пользователи</h2>
         <UserCreate />
       </div>
-      {isLoading ? (
-        <div className="mt-36">
-          <LoadingSpinner size={50} />
-        </div>
-      ) : (
-        <UsersTable usersResponse={data!.data} setFilters={setUserFilters} />
-      )}
+      {renderContent()}
     </div>
   );
-};
+}
 
 export default DashboardUsersPage;

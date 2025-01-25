@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
-import Profile from "./Profile";
-import NavBar from "./NavBar";
+import Profile from './Profile';
+import NavBar from './NavBar';
 
-const Header = () => {
+function Header() {
   const pathname = usePathname();
-  const isDashboardPage = pathname.includes("/dashboard");
+  const isDashboardPage = pathname.includes('/dashboard');
 
   return (
     <header className="w-full border-b-2">
@@ -27,6 +27,6 @@ const Header = () => {
       </div>
     </header>
   );
-};
+}
 
 export default Header;

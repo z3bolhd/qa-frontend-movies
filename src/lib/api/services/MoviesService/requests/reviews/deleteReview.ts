@@ -1,6 +1,6 @@
-import { AxiosCustomRequestConfig } from "@api/types";
-import { MoviesClient } from "../../client";
-import { Review } from "@lib/types";
+import { AxiosCustomRequestConfig } from '@api/types';
+import { Review } from '@lib/types';
+import MoviesClient from '@api/services/MoviesService/client';
 
 export interface DeleteReviewParams {
   movieId: number;
@@ -8,5 +8,4 @@ export interface DeleteReviewParams {
 
 export type DeleteReviewConfig = AxiosCustomRequestConfig<DeleteReviewParams>;
 
-export const deleteReview = async ({ params, config }: DeleteReviewConfig) =>
-  MoviesClient.delete<Review>(`/movies/${params.movieId}/reviews`, config);
+export const deleteReview = async ({ params, config }: DeleteReviewConfig) => MoviesClient.delete<Review>(`/movies/${params.movieId}/reviews`, config);

@@ -1,20 +1,17 @@
-"use client";
+import React, { Suspense } from 'react';
+import SideBar from './_components/SideBar';
 
-import { QueryClient, QueryClientProvider } from "react-query";
-
-import SideBar from "./_components/SideBar";
-
-const queryClient = new QueryClient();
-
-const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
+function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="w-full min-h-full flex overflow-hidden">
       <SideBar />
-      <main className="w-full h-[calc(100vh-82px)] overflow-auto pl-5 py-5">
-        <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-      </main>
+      <Suspense>
+        <main className="w-full h-[calc(100vh-82px)] overflow-auto pl-5 py-5">
+          {children}
+        </main>
+      </Suspense>
     </div>
   );
-};
+}
 
 export default DashboardLayout;

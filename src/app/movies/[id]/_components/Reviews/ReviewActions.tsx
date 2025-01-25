@@ -1,11 +1,11 @@
-import { MoreVertical } from "lucide-react";
+import { MoreVertical } from 'lucide-react';
 
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@components/ui/dropdown-menu";
+} from '@components/ui/dropdown-menu';
 
 interface ReviewActionsProps {
   hidden: boolean;
@@ -14,31 +14,40 @@ interface ReviewActionsProps {
   handleDelete: () => void;
 }
 
-const ReviewActions = ({ handleDelete, handleHide, handleShow, hidden }: ReviewActionsProps) => {
+function ReviewActions({
+  handleDelete, handleHide, handleShow, hidden,
+}: ReviewActionsProps) {
+  const renderMenuItem = () => {
+    if (hidden) {
+      return (
+        <DropdownMenuItem
+          className="cursor-pointer"
+          onClick={handleShow}
+          data-qa-id="movie_review_show_button"
+        >
+          Показать
+        </DropdownMenuItem>
+      );
+    }
+
+    return (
+      <DropdownMenuItem
+        className="cursor-pointer"
+        onClick={handleHide}
+        data-qa-id="movie_review_hide_button"
+      >
+        Скрыть
+      </DropdownMenuItem>
+    );
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="w-5" data-qa-id="movie_review_actions_button">
         <MoreVertical className="h-4 w-4" />
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        {hidden ? (
-          <DropdownMenuItem
-            className="cursor-pointer"
-            onClick={handleShow}
-            data-qa-id="movie_review_show_button"
-          >
-            Показать
-          </DropdownMenuItem>
-        ) : (
-          <DropdownMenuItem
-            className="cursor-pointer"
-            onClick={handleHide}
-            data-qa-id="movie_review_hide_button"
-          >
-            Скрыть
-          </DropdownMenuItem>
-        )}
-
+        {renderMenuItem()}
         <DropdownMenuItem
           className="cursor-pointer"
           onClick={handleDelete}
@@ -49,6 +58,6 @@ const ReviewActions = ({ handleDelete, handleHide, handleShow, hidden }: ReviewA
       </DropdownMenuContent>
     </DropdownMenu>
   );
-};
+}
 
 export default ReviewActions;

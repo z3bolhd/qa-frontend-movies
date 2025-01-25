@@ -1,31 +1,17 @@
-import { notFound } from "next/navigation";
-import PaymentCard from "./components/PaymentCard";
-import { MoviesService } from "@api/services";
+'use client';
 
-const PaymentPage = async ({
-  searchParams: { movieId },
-}: {
-  searchParams: { movieId: string };
-}) => {
-  if (isNaN(Number(movieId))) {
-    notFound();
-  }
+import { Suspense } from 'react';
 
-  const response = await MoviesService.getMovieById({
-    params: {
-      id: Number(movieId),
-    },
-  });
+import PaymentCard from './components/PaymentCard';
 
-  if (!response) {
-    notFound();
-  }
-
+function PaymentPage() {
   return (
     <div className="mt-36 mx-auto w-fit">
-      <PaymentCard {...response.data} />
+      <Suspense>
+        <PaymentCard />
+      </Suspense>
     </div>
   );
-};
+}
 
 export default PaymentPage;

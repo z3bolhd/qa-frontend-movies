@@ -1,11 +1,11 @@
-import { Button } from "@components/ui/button";
-import { Card, CardFooter, CardHeader } from "@components/ui/card";
+import { Button } from '@components/ui/button';
+import { Card, CardFooter, CardHeader } from '@components/ui/card';
 
 interface ErrorProps {
   handleRetry: (...args: any) => void;
 }
 
-export const FetchError = ({ handleRetry }: ErrorProps) => {
+export function FetchError({ handleRetry }: ErrorProps) {
   return (
     <Card className="w-[450px] mt-36 mx-auto">
       <CardHeader>
@@ -19,6 +19,6 @@ export const FetchError = ({ handleRetry }: ErrorProps) => {
       </CardFooter>
     </Card>
   );
-};
+}
 
 export default FetchError;

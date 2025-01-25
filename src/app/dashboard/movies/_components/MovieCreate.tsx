@@ -1,38 +1,41 @@
-"use client";
+'use client';
 
-import { useMutation, useQueryClient } from "react-query";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import toast from "react-hot-toast";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import toast from 'react-hot-toast';
 
-import { Dialog, DialogContent, DialogTrigger } from "@components/ui/dialog";
-import { Button } from "@components/ui/button";
+import { Dialog, DialogContent, DialogTrigger } from '@components/ui/dialog';
+import { Button } from '@components/ui/button';
 
-import MovieDialogForm from "./MovieDialogForm";
-import { MovieFormSchema, movieFormSchema } from "./MovieFormSchema";
-import { MoviesService } from "@api/services";
+import MoviesService from '@api/services/MoviesService/service';
+import MovieDialogForm from './MovieDialogForm';
+import { MovieFormSchema, movieFormSchema } from './MovieFormSchema';
 
-const MovieCreate = () => {
+function MovieCreate() {
   const form = useForm<MovieFormSchema>({ resolver: zodResolver(movieFormSchema) });
 
   const queryClient = useQueryClient();
 
-  const { mutateAsync, isLoading, isError } = useMutation({
-    mutationFn: (data: MovieFormSchema) => MoviesService.createMovie({ params: data }),
-  });
+  const { mutateAsync, isLoading } = useMutation(
+    ['createMovie'],
+    (data: MovieFormSchema) => MoviesService.createMovie({ params: data }),
+  );
 
   const onSubmit: SubmitHandler<MovieFormSchema> = async (data) => {
     try {
-      const { status } = await mutateAsync(data);
-      if (status === 201) {
-        toast.success("Фильм успешно добавлен");
-        document.getElementById("closeDialog")?.click();
-        queryClient.refetchQueries(["movies"]);
+      await mutateAsync(data);
+
+      toast.success('Фильм успешно добавлен');
+      document.getElementById('closeDialog')?.click();
+      queryClient.refetchQueries(['movies']);
+    } catch (e: any) {
+      if (e.status === 409) {
+        toast.error('Фильм с таким названием уже существует');
         return;
       }
-      toast.error("Что-то пошло не так");
-    } catch (e) {
-      toast.error("Что-то пошло не так");
+
+      toast.error('Что-то пошло не так');
     }
   };
 
@@ -50,7 +53,7 @@ const MovieCreate = () => {
       <DialogContent>
         <MovieDialogForm
           title="Добавление фильма"
-          description={`Внесите данные фильма. Кликните на кнопку "Отправить" для добавления.`}
+          description={'Внесите данные фильма. Кликните на кнопку "Отправить" для добавления.'}
           footerButtonText="Отправить"
           {...form}
           errors={form.formState.errors}
@@ -60,6 +63,6 @@ const MovieCreate = () => {
       </DialogContent>
     </Dialog>
   );
-};
+}
 
 export default MovieCreate;

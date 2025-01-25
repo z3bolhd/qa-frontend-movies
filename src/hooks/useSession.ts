@@ -1,8 +1,6 @@
-import { AuthContext } from "@context/AuthProvider";
-import { useContext } from "react";
+import { AuthContext } from '@context/AuthProvider';
+import { useContext } from 'react';
 
-const useSession = () => {
-  return useContext(AuthContext);
-};
+const useSession = () => useContext(AuthContext);
 
 export default useSession;

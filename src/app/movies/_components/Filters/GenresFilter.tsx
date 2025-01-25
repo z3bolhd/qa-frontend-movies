@@ -1,7 +1,6 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 import {
   Select,
@@ -9,42 +8,30 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@components/ui/select";
-import { Genre } from "@lib/types";
-import { MoviesService } from "@api/services";
+} from '@components/ui/select';
 
-const GenresFilter = () => {
+import { useQuery } from '@tanstack/react-query';
+import MoviesService from '@api/services/MoviesService/service';
+
+function GenresFilter() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
 
-  const [genres, setGenres] = useState<Genre[]>([]);
-  const [paramGenreId, setParamGenreId] = useState<string>(searchParams.get("genreId") || "");
+  const { data: genres } = useQuery(['genres'], () => MoviesService.getGenres({}));
 
-  useEffect(() => {
-    const fetchGenres = async () => {
-      const { data: genres } = await MoviesService.getGenres({});
-      if (!genres) {
-        return;
-      }
-      setGenres(genres);
-    };
-
-    fetchGenres();
-  }, []);
+  const paramGenreId = searchParams.get('genreId') ?? '';
 
   const handleChange = (value: string) => {
     const params = new URLSearchParams(searchParams.toString());
-    params.set("genreId", value);
-    params.set("page", "1");
+    params.set('genreId', value);
+    params.set('page', '1');
 
-    if (value === "all") {
-      params.delete("genreId");
+    if (value === 'all') {
+      params.delete('genreId');
     }
 
     const newParams = params.toString();
-
-    setParamGenreId(value);
 
     router.replace(`${pathname}?${newParams}`);
   };
@@ -61,15 +48,15 @@ const GenresFilter = () => {
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="all">Все</SelectItem>
-          {genres.map((genre) => (
+          {genres ? genres.map((genre) => (
             <SelectItem key={genre.id} value={String(genre.id)}>
               {genre.name}
             </SelectItem>
-          ))}
+          )) : null}
         </SelectContent>
       </Select>
     </div>
   );
-};
+}
 
 export default GenresFilter;

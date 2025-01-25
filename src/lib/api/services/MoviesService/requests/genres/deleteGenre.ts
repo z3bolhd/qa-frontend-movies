@@ -1,6 +1,6 @@
-import { AxiosCustomRequestConfig } from "@api/types";
-import { MoviesClient } from "../../client";
-import { Genre } from "@lib/types";
+import { AxiosCustomRequestConfig } from '@api/types';
+import { Genre } from '@lib/types';
+import MoviesClient from '@api/services/MoviesService/client';
 
 export interface DeleteGenreParams {
   id: number;
@@ -8,5 +8,4 @@ export interface DeleteGenreParams {
 
 export type DeleteGenreConfig = AxiosCustomRequestConfig<DeleteGenreParams>;
 
-export const deleteGenre = async ({ params, config }: DeleteGenreConfig) =>
-  MoviesClient.delete<Genre>(`/genres/${params.id}`, config);
+export const deleteGenre = async ({ params, config }: DeleteGenreConfig) => MoviesClient.delete<Genre>(`/genres/${params.id}`, config);

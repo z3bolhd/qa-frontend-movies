@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   flexRender,
@@ -6,9 +6,8 @@ import {
   getFilteredRowModel,
   getSortedRowModel,
   useReactTable,
-} from "@tanstack/react-table";
-import { Dispatch, SetStateAction } from "react";
-import columns from "./columns";
+} from '@tanstack/react-table';
+import { Dispatch, SetStateAction } from 'react';
 import {
   Table,
   TableBody,
@@ -16,17 +15,18 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@components/ui/table";
-import { Button } from "@components/ui/button";
+} from '@components/ui/table';
+import { Button } from '@components/ui/button';
 
-import { GetUsersParams, GetUsersResponse } from "@lib/types";
+import { GetUsersParams, GetUsersResponse } from '@lib/types';
+import columns from './columns';
 
 interface UsersTableProps {
   usersResponse: GetUsersResponse | null;
   setFilters: Dispatch<SetStateAction<GetUsersParams>>;
 }
 
-const UsersTable = ({ usersResponse, setFilters }: UsersTableProps) => {
+function UsersTable({ usersResponse, setFilters }: UsersTableProps) {
   if (!usersResponse) {
     return null;
   }
@@ -56,15 +56,13 @@ const UsersTable = ({ usersResponse, setFilters }: UsersTableProps) => {
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id} className="hover:bg-transparent">
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id} className="text-white bg-transparent">
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(header.column.columnDef.header, header.getContext())}
-                    </TableHead>
-                  );
-                })}
+                {headerGroup.headers.map((header) => (
+                  <TableHead key={header.id} className="text-white bg-transparent">
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(header.column.columnDef.header, header.getContext())}
+                  </TableHead>
+                ))}
               </TableRow>
             ))}
           </TableHeader>
@@ -94,7 +92,13 @@ const UsersTable = ({ usersResponse, setFilters }: UsersTableProps) => {
         <div className="flex items-center justify-end space-x-2 py-4">
           <div className="text-black">
             <p className="text-sm">
-              Страница {usersResponse.page} из {usersResponse.pageCount}
+              Страница
+              {' '}
+              {usersResponse.page}
+              {' '}
+              из
+              {' '}
+              {usersResponse.pageCount}
             </p>
           </div>
           <div className="space-x-2">
@@ -119,6 +123,6 @@ const UsersTable = ({ usersResponse, setFilters }: UsersTableProps) => {
       ) : null}
     </>
   );
-};
+}
 
 export default UsersTable;

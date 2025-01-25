@@ -1,29 +1,34 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import Link from "next/link";
-import toast from "react-hot-toast";
-import { Review } from "@lib/types";
-import { useRouter } from "next/navigation";
+import { useState } from 'react';
+import Link from 'next/link';
+import toast from 'react-hot-toast';
+import { Review } from '@lib/types';
 
-import useSession from "@hooks/useSession";
-import { MoviesService } from "@api/services";
+import useSession from '@hooks/useSession';
 
-import PersonalReviewActions from "./PersonalReviewActions";
-import ReviewCard from "../ReviewCard";
-import ReviewForm from "./ReviewForm";
+import MoviesService from '@api/services/MoviesService/service';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import PersonalReviewActions from './PersonalReviewActions';
+import ReviewCard from '../ReviewCard';
+import ReviewForm from './ReviewForm';
 
 interface PersonalReviewProps {
   review?: Review;
   movieId: number;
 }
 
-const PersonalReview = ({ review, movieId }: PersonalReviewProps) => {
+function PersonalReview({ review, movieId }: PersonalReviewProps) {
   const [isFormOpen, setIsFormOpen] = useState(false);
 
   const { session } = useSession();
 
-  const router = useRouter();
+  const queryClient = useQueryClient();
+
+  const { mutateAsync: deleteReview } = useMutation(
+    ['deleteReview'],
+    () => MoviesService.deleteReview({ params: { movieId } }),
+  );
 
   const openForm = () => {
     setIsFormOpen(true);
@@ -34,17 +39,16 @@ const PersonalReview = ({ review, movieId }: PersonalReviewProps) => {
   };
 
   const handleDelete = async () => {
-    const { status } = await MoviesService.deleteReview({
-      params: { movieId },
-    });
+    try {
+      await deleteReview();
+      toast.success('Отзыв успешно удален');
+    } catch (error) {
+      console.log(error);
 
-    if (status !== 200) {
-      toast.error("Произошла ошибка");
-      return;
+      toast.error('Произошла ошибка');
     }
 
-    toast.success("Отзыв успешно удален");
-    router.refresh();
+    queryClient.refetchQueries(['movieById']);
   };
 
   if (!session) {
@@ -71,6 +75,6 @@ const PersonalReview = ({ review, movieId }: PersonalReviewProps) => {
       )}
     </div>
   );
-};
+}
 
 export default PersonalReview;

@@ -1,21 +1,21 @@
-import Link from "next/link";
+'use client';
 
-import { Button } from "@components/ui/button";
+import Link from 'next/link';
 
-import MovieCard from "./_components/MovieCard";
-import { MoviesService } from "@api/services";
+import { Button } from '@components/ui/button';
 
-const Home = async () => {
-  const {
-    data: { movies },
-  } = await MoviesService.getMovies({
-    params: { createdAt: "desc", page: 1, pageSize: 9 },
-  }).catch((error) => {
-    console.log(error);
-    return { data: { movies: null } };
-  });
+import { useQuery } from '@tanstack/react-query';
+import MoviesService from '@api/services/MoviesService/service';
+import MovieCard from './_components/MovieCard';
 
-  if (!movies || movies.length === 0) {
+function Home() {
+  const { data } = useQuery(['getMoviesHome'], () => MoviesService.getMovies({
+    params: { createdAt: 'desc', page: 1, pageSize: 9 },
+  }));
+
+  const { movies } = data || {};
+
+  if (!Array.isArray(movies) || movies?.length === 0) {
     return null;
   }
 
@@ -35,6 +35,6 @@ const Home = async () => {
       </div>
     </main>
   );
-};
+}
 
 export default Home;

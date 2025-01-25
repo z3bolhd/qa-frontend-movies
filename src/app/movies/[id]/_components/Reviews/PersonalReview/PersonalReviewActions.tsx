@@ -1,18 +1,20 @@
-import { MoreVertical } from "lucide-react";
+'use client';
+
+import { MoreVertical } from 'lucide-react';
 
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@components/ui/dropdown-menu";
+} from '@components/ui/dropdown-menu';
 
 interface PersonalReviewActionsProps {
   handleDelete: () => void;
   handleEdit: () => void;
 }
 
-const PersonalReviewActions = ({ handleDelete, handleEdit }: PersonalReviewActionsProps) => {
+function PersonalReviewActions({ handleDelete, handleEdit }: PersonalReviewActionsProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="w-5" data-qa-id="movie_review_actions_button">
@@ -36,6 +38,6 @@ const PersonalReviewActions = ({ handleDelete, handleEdit }: PersonalReviewActio
       </DropdownMenuContent>
     </DropdownMenu>
   );
-};
+}
 
 export default PersonalReviewActions;

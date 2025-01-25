@@ -1,31 +1,33 @@
-import { useState } from "react";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import toast from "react-hot-toast";
+'use client';
 
-import { Input } from "@components/ui/input";
-import { Label } from "@components/ui/label";
-import { PaymentFormSchema, paymentFormSchema } from "./PaymentFormSchema";
+import { useState } from 'react';
+import { Controller, SubmitHandler, useForm } from 'react-hook-form';
+import toast from 'react-hot-toast';
+import { useMutation } from '@tanstack/react-query';
+
+import { Input } from '@components/ui/input';
+import { Label } from '@components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@components/ui/select";
-import { Button } from "@components/ui/button";
-import { zodResolver } from "@hookform/resolvers/zod";
+} from '@components/ui/select';
+import { Button } from '@components/ui/button';
+import { zodResolver } from '@hookform/resolvers/zod';
 
-import LoadingSpinner from "@components/LoadingSpinner";
-import { PaymentService } from "@api/services/PaymentService";
-import { AxiosError } from "axios";
+import LoadingSpinner from '@components/LoadingSpinner';
+
+import { PaymentFormSchema, paymentFormSchema } from './PaymentFormSchema';
 
 interface PaymentFormProps {
-  movieId: number;
+  onSubmit: (data: PaymentFormSchema) => void;
   price: number;
-  onSuccess: () => void;
+  isLoading: boolean;
 }
 
-const PaymentForm = ({ movieId, price, onSuccess }: PaymentFormProps) => {
+function PaymentForm({ onSubmit, price, isLoading }: PaymentFormProps) {
   const {
     register,
     watch,
@@ -35,47 +37,13 @@ const PaymentForm = ({ movieId, price, onSuccess }: PaymentFormProps) => {
   } = useForm<PaymentFormSchema>({
     resolver: zodResolver(paymentFormSchema),
   });
-  const [isLoading, setIsLoading] = useState(false);
+  const total = price * watch('amount') || price;
 
-  const total = price * watch("amount") || price;
-
-  const onSubmit: SubmitHandler<PaymentFormSchema> = async (data) => {
-    setIsLoading(true);
-    const expirationDate = data.card.expirationMonth + "/" + data.card.expirationYear;
-
-    try {
-      const { status } = await PaymentService.createPayment({
-        params: {
-          movieId: movieId,
-          amount: data.amount,
-          card: {
-            ...data.card,
-            expirationDate,
-          },
-        },
-      });
-
-      toast.success("Оплата прошла успешно");
-      onSuccess();
-    } catch (e: any | AxiosError) {
-      switch (e?.response?.status) {
-        case 400:
-          toast.error("Неверные данные карты");
-          break;
-        case 404:
-          toast.error("Фильм не найден");
-          break;
-        case 503:
-          toast.error("Сервис временно недоступен");
-          break;
-        default:
-          toast.error("Сервис временно недоступен");
-          break;
-      }
-    }
-
-    setIsLoading(false);
-  };
+  const yearOptions = Array.from({ length: 10 }, (_, i) => (
+    <SelectItem key={i} value={`${new Date().getFullYear() + i}`.slice(2)}>
+      {new Date().getFullYear() + i}
+    </SelectItem>
+  ));
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -88,7 +56,7 @@ const PaymentForm = ({ movieId, price, onSuccess }: PaymentFormProps) => {
           defaultValue={1}
           max={5}
           data-qa-id="payment_amount_input"
-          {...register("amount", { valueAsNumber: true })}
+          {...register('amount', { valueAsNumber: true })}
         />
         {errors.amount && <p className="text-red-500 text-sm">{errors.amount.message}</p>}
       </div>
@@ -101,7 +69,7 @@ const PaymentForm = ({ movieId, price, onSuccess }: PaymentFormProps) => {
           placeholder="1234123412341234"
           maxLength={16}
           data-qa-id="payment_card_number_input"
-          {...register("card.cardNumber")}
+          {...register('card.cardNumber')}
         />
         {errors.card?.cardNumber && (
           <p className="text-red-500 text-sm">{errors.card?.cardNumber.message}</p>
@@ -116,7 +84,7 @@ const PaymentForm = ({ movieId, price, onSuccess }: PaymentFormProps) => {
           type="text"
           placeholder="John Doe"
           data-qa-id="payment_card_holder_input"
-          {...register("card.cardHolder")}
+          {...register('card.cardHolder')}
         />
         {errors.card?.cardHolder && (
           <p className="text-red-500 text-sm">{errors.card?.cardHolder.message}</p>
@@ -168,11 +136,7 @@ const PaymentForm = ({ movieId, price, onSuccess }: PaymentFormProps) => {
                   <SelectValue placeholder="Год" />
                 </SelectTrigger>
                 <SelectContent>
-                  {Array.from({ length: 10 }, (_, i) => (
-                    <SelectItem key={i} value={`${new Date().getFullYear() + i}`.slice(2)}>
-                      {new Date().getFullYear() + i}
-                    </SelectItem>
-                  ))}
+                  {yearOptions}
                 </SelectContent>
               </Select>
             )}
@@ -190,7 +154,7 @@ const PaymentForm = ({ movieId, price, onSuccess }: PaymentFormProps) => {
             minLength={3}
             maxLength={3}
             data-qa-id="payment_card_cvc_input"
-            {...register("card.securityCode", { valueAsNumber: true })}
+            {...register('card.securityCode', { valueAsNumber: true })}
           />
           {errors.card?.securityCode && (
             <p className="text-red-500 text-sm">{errors.card?.securityCode.message}</p>
@@ -210,11 +174,11 @@ const PaymentForm = ({ movieId, price, onSuccess }: PaymentFormProps) => {
           disabled={isLoading}
           data-qa-id="payment_submit_button"
         >
-          {isLoading ? <LoadingSpinner size={16} /> : "Оплатить"}
+          {isLoading ? <LoadingSpinner size={16} /> : 'Оплатить'}
         </Button>
       </div>
     </form>
   );
-};
+}
 
 export default PaymentForm;

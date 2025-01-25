@@ -1,11 +1,13 @@
-import { AxiosCustomRequestConfig } from "@api/types";
-import { MoviesClient } from "../../client";
-import { Movie } from "@lib/types";
+import { AxiosCustomRequestConfig } from '@api/types';
+import { Movie } from '@lib/types';
+import MoviesClient from '@api/services/MoviesService/client';
 
-export interface CreateMovieParams
-  extends Omit<Movie, "id" | "reviews" | "createdAt" | "rating" | "genre"> {}
+type CreateMovieParams = Omit<Movie, 'id' | 'reviews' | 'createdAt' | 'rating' | 'genre'>
 
 export type CreateMovieConfig = AxiosCustomRequestConfig<CreateMovieParams>;
 
-export const createMovie = async ({ params, config }: CreateMovieConfig) =>
-  MoviesClient.post<Movie>(`/movies`, params, config);
+export const createMovie = async ({ params, config }: CreateMovieConfig) => {
+  const response = await MoviesClient.post<Movie>('/movies', params, config);
+
+  return response.data;
+};

@@ -1,41 +1,45 @@
-"use client";
+'use client';
 
-import toast from "react-hot-toast";
-import { useMutation, useQueryClient } from "react-query";
+import toast from 'react-hot-toast';
+import React from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import { Button } from "@components/ui/button";
-import { DialogClose, DialogFooter, DialogHeader } from "@components/ui/dialog";
+import { Button } from '@components/ui/button';
+import { DialogClose, DialogFooter, DialogHeader } from '@components/ui/dialog';
 
-import { Genre } from "@lib/types";
-import { MoviesService } from "@api/services";
+import { Genre } from '@lib/types';
+import MoviesService from '@api/services/MoviesService/service';
 
-const GenreCellDelete = ({ id, name }: Genre) => {
+function GenreCellDelete({ id, name }: Genre) {
   const queryClient = useQueryClient();
 
-  const { mutateAsync, isLoading } = useMutation({
-    mutationFn: () => MoviesService.deleteGenre({ params: { id } }),
-  });
+  const { mutateAsync, isLoading } = useMutation(
+    ['deleteGenre'],
+    () => MoviesService.deleteGenre({ params: { id } }),
+  );
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const { status } = await mutateAsync();
-
-    if (status === 200) {
-      toast.success("Жанр успешно удален");
-      queryClient.refetchQueries(["genres"]);
-      document.getElementById("closeDialog")?.click();
-      return;
+    try {
+      await mutateAsync();
+      toast.success('Жанр успешно удален');
+      queryClient.refetchQueries(['genres']);
+      document.getElementById('closeDialog')?.click();
+    } catch {
+      toast.error('Не удалось удалить фильм');
     }
-
-    toast.error("Не удалось удалить фильм");
   };
+
+  const warningText = `Вы уверены, что хотите удалить жанр "${name}"?`;
 
   return (
     <form onSubmit={onSubmit}>
       <DialogHeader>Удаление жанра</DialogHeader>
       <div className="mt-5">
-        <p>Вы уверены, что хотите удалить жанр "{name}"?</p>
+        <p>
+          {warningText}
+        </p>
         <p className="text-red-500 mt-3 text-sm">Фильмы с этим жанром тоже удалятся!</p>
       </div>
       <DialogFooter className="mt-5">
@@ -51,6 +55,6 @@ const GenreCellDelete = ({ id, name }: Genre) => {
       </DialogFooter>
     </form>
   );
-};
+}
 
 export default GenreCellDelete;

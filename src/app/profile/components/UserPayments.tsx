@@ -1,40 +1,47 @@
-import { Payment } from "@lib/types";
-import { useEffect, useState } from "react";
-import UserPaymentsTable from "./Table";
-import { PaymentService } from "@api/services/PaymentService";
+import { useQuery } from '@tanstack/react-query';
+import PaymentService from '@api/services/PaymentService/service';
+import UserPaymentsTable from '@app/profile/components/Table';
+import LoadingSpinner from '@components/LoadingSpinner';
 
-const UserPayments = () => {
-  const [payments, setPayments] = useState<Payment[]>([]);
-  const [isError, setIsError] = useState(false);
+function UserPayments() {
+  const { data: payments, isError, isLoading } = useQuery(
+    ['userPayments'],
+    () => PaymentService.getUserPayments({}),
+    {
+      retryOnMount: true,
+    },
+  );
 
-  const fetchPayments = async () => {
-    try {
-      const { data: payments } = await PaymentService.getUserPayments({});
-
-      setPayments(payments);
-      setIsError(false);
-    } catch (e) {
-      setIsError(true);
+  const renderContent = () => {
+    if (isLoading) {
+      return (
+        <div className="mt-36 m-auto">
+          <LoadingSpinner size={50} />
+        </div>
+      );
     }
-  };
 
-  useEffect(() => {
-    fetchPayments();
-  }, []);
+    if (isError || !payments) {
+      return (
+        <p className="text-xl mt-3">Произошла ошибка при получении платежей</p>
+      );
+    }
+
+    if (payments?.length < 1) {
+      return (
+        <p className="text-xl mt-3">Вы еще не оплатили ни один билет</p>
+      );
+    }
+
+    return <UserPaymentsTable payments={payments} />;
+  };
 
   return (
     <div className="my-10">
       <h2 className="text-4xl">Платежи</h2>
-
-      {isError ? (
-        <p className="text-xl mt-3">Произошла ошибка при получении платежей</p>
-      ) : payments.length === 0 ? (
-        <p className="text-xl mt-3">Вы еще не оплатили ни один билет</p>
-      ) : (
-        <UserPaymentsTable payments={payments} />
-      )}
+      {renderContent()}
     </div>
   );
-};
+}
 
 export default UserPayments;

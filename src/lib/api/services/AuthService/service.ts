@@ -1,7 +1,9 @@
-import * as authRequests from "./requests/auth";
-import * as usersRequests from "./requests/users";
+import * as authRequests from './requests/auth';
+import * as usersRequests from './requests/users';
 
-export const AuthService = {
+const AuthService = {
   ...authRequests,
   ...usersRequests,
 };
+
+export default AuthService;

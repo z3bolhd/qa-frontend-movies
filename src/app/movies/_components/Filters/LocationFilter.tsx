@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Select,
@@ -6,33 +6,30 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@components/ui/select";
-import { Location } from "@lib/types";
+} from '@components/ui/select';
+import { Location } from '@lib/types';
 
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 const locations = Object.values(Location);
 
-const LocationFilter = () => {
+function LocationFilter() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
 
-  const [locationParam, setLocationParam] = useState<string>(searchParams.get("locations") || "");
+  const locationParam = searchParams.get('locations') || '';
 
   const handleChange = (value: string) => {
     const params = new URLSearchParams(searchParams.toString());
-    params.set("locations", value);
-    params.set("page", "1");
+    params.set('locations', value);
+    params.set('page', '1');
 
-    if (value === "all") {
-      params.delete("locations");
+    if (value === 'all') {
+      params.delete('locations');
     }
 
     const newParams = params.toString();
-
-    setLocationParam(value);
 
     router.replace(`${pathname}?${newParams}`);
   };
@@ -54,6 +51,6 @@ const LocationFilter = () => {
       </Select>
     </div>
   );
-};
+}
 
 export default LocationFilter;

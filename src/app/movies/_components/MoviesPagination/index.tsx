@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Pagination,
@@ -7,67 +7,69 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from "@components/ui/pagination";
-import { GetMoviesParams } from "@lib/types";
+} from '@components/ui/pagination';
+import { usePathname, useSearchParams } from 'next/navigation';
 
 interface MoviesPaginationProps {
-  currentPage: string | number;
-  pageCount: number;
-  searchParams: GetMoviesParams;
+  pageCount?: number;
 }
 
-const MoviesPagination = ({ currentPage, pageCount }: MoviesPaginationProps) => {
-  const params = new URLSearchParams();
-  params.delete("page");
+function MoviesPagination({ pageCount }: MoviesPaginationProps) {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
-  currentPage = +currentPage;
+  const currentPageNumber = Number(searchParams.get('page'));
 
-  const paramsString = params.toString() || "";
-  const nextPageHref = `/movies?page=${currentPage + 1}&${paramsString}`;
-  const prevPageHref = `/movies?page=${currentPage - 1}&${paramsString}`;
-  const currentPageHref = `/movies?page=${currentPage}&${paramsString}`;
+  const getPageHref = (page: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('page', String(page));
+    return `${pathname}?${params.toString()}`;
+  };
 
-  if (pageCount === 1) {
+  const prevPage = currentPageNumber - 1;
+  const nextPage = currentPageNumber + 1;
+
+  if (pageCount === 1 || !pageCount) {
     return null;
   }
 
   return (
     <Pagination className="w-full flex mr-0 ml-auto justify-end">
       <PaginationContent>
-        {currentPage > 1 ? (
+        {currentPageNumber > 1 ? (
           <PaginationItem>
-            <PaginationPrevious href={prevPageHref} />
+            <PaginationPrevious href={getPageHref(prevPage)} />
           </PaginationItem>
         ) : null}
 
-        {currentPage - 1 > 0 ? (
+        {prevPage > 0 ? (
           <PaginationItem>
-            <PaginationLink href={prevPageHref}>{currentPage - 1}</PaginationLink>
+            <PaginationLink href={getPageHref(prevPage)}>{prevPage}</PaginationLink>
           </PaginationItem>
         ) : null}
 
-        {currentPage ? (
+        {currentPageNumber ? (
           <PaginationItem>
-            <PaginationLink href={currentPageHref} isActive>
-              {currentPage}
+            <PaginationLink href={getPageHref(currentPageNumber)} isActive>
+              {currentPageNumber}
             </PaginationLink>
           </PaginationItem>
         ) : null}
 
-        {pageCount >= currentPage + 1 ? (
+        {pageCount >= nextPage ? (
           <PaginationItem>
-            <PaginationLink href={nextPageHref}>{currentPage + 1}</PaginationLink>
+            <PaginationLink href={getPageHref(nextPage)}>{nextPage}</PaginationLink>
           </PaginationItem>
         ) : null}
 
-        {pageCount > currentPage ? (
+        {pageCount > currentPageNumber ? (
           <PaginationItem>
-            <PaginationNext href={nextPageHref} />
+            <PaginationNext href={getPageHref(nextPage)} />
           </PaginationItem>
         ) : null}
       </PaginationContent>
     </Pagination>
   );
-};
+}
 
 export default MoviesPagination;

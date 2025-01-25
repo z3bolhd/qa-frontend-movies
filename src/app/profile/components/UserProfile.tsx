@@ -1,10 +1,17 @@
-"use client";
+'use client';
 
-import UserPayments from "./UserPayments";
-import useSession from "@hooks/useSession";
+import useSession from '@hooks/useSession';
+import { useRouter } from 'next/navigation';
+import UserPayments from './UserPayments';
 
-const UserProfile = () => {
-  const { session } = useSession();
+function UserProfile() {
+  const router = useRouter();
+  const { session, isLogged } = useSession();
+
+  if (!isLogged) {
+    router.push('/login');
+    return null;
+  }
 
   if (!session) {
     return null;
@@ -19,10 +26,22 @@ const UserProfile = () => {
 
         <div className="mt-10 text-xl">
           <ul className="flex flex-col gap-2">
-            <li>ID: {session.id}</li>
-            <li>ФИО: {session.fullName}</li>
-            <li>Email: {session.email}</li>
-            <li>Роли: {session.roles.join(", ")}</li>
+            <li>
+              ID:
+              {session.id}
+            </li>
+            <li>
+              ФИО:
+              {session.fullName}
+            </li>
+            <li>
+              Email:
+              {session.email}
+            </li>
+            <li>
+              Роли:
+              {session.roles.join(', ')}
+            </li>
           </ul>
         </div>
       </div>
@@ -30,6 +49,6 @@ const UserProfile = () => {
       <UserPayments />
     </main>
   );
-};
+}
 
 export default UserProfile;

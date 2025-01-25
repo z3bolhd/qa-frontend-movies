@@ -1,13 +1,14 @@
-import UserProfile from "./components/UserProfile";
-import { Metadata } from "next";
+'use client';
 
-export const metadata: Metadata = {
-  title: "Профиль | Cinescope",
-  description: "Профиль пользователя",
-};
+import UserProfile from './components/UserProfile';
 
-const ProfilePage = async () => {
-  return <UserProfile />;
-};
+function ProfilePage() {
+  return (
+    <>
+      <title>Профиль | Cinescope</title>
+      <UserProfile />
+    </>
+  );
+}
 
 export default ProfilePage;

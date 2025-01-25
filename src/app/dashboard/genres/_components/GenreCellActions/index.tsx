@@ -1,24 +1,24 @@
-"use client";
+'use client';
 
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@components/ui/dropdown-menu";
-import { Row } from "@tanstack/react-table";
-import { MoreHorizontal } from "lucide-react";
+} from '@components/ui/dropdown-menu';
+import { Row } from '@tanstack/react-table';
+import { MoreHorizontal } from 'lucide-react';
 
-import { Dialog, DialogContent, DialogTrigger } from "@components/ui/dialog";
+import { Dialog, DialogContent, DialogTrigger } from '@components/ui/dialog';
 
-import { Genre } from "@lib/types";
-import GenreCellDelete from "./GenreCellDelete";
+import { Genre } from '@lib/types';
+import GenreCellDelete from './GenreCellDelete';
 
 interface MovieCellActionsProps {
   row: Row<Genre>;
 }
 
-const GenreCellActions = ({ row }: MovieCellActionsProps) => {
+function GenreCellActions({ row }: MovieCellActionsProps) {
   const genre = row.original;
 
   return (
@@ -44,6 +44,6 @@ const GenreCellActions = ({ row }: MovieCellActionsProps) => {
       </DialogContent>
     </Dialog>
   );
-};
+}
 
 export default GenreCellActions;

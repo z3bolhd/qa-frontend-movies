@@ -1,9 +1,11 @@
-import RegisterForm from "./_components/RegisterForm";
+import RegisterForm from './_components/RegisterForm';
 
-const RegisterPage = () => (
-  <div className="w-full h-full mt-36">
-    <RegisterForm />
-  </div>
-);
+function RegisterPage() {
+  return (
+    <div className="w-full h-full mt-36">
+      <RegisterForm />
+    </div>
+  );
+}
 
 export default RegisterPage;

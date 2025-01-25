@@ -1,11 +1,13 @@
-import { Dispatch, SetStateAction } from "react";
+'use client';
+
+import { useEffect } from 'react';
 import {
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getSortedRowModel,
   useReactTable,
-} from "@tanstack/react-table";
+} from '@tanstack/react-table';
 
 import {
   Table,
@@ -14,40 +16,86 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@components/ui/table";
-import { Button } from "@components/ui/button";
+} from '@components/ui/table';
+import { Button } from '@components/ui/button';
 
-import { GetPaymentsParams, GetPaymentsResponse } from "@lib/types";
+import { useQuery } from '@tanstack/react-query';
+import PaymentService from '@api/services/PaymentService/service';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import LoadingSpinner from '@components/LoadingSpinner';
+import columns from './columns';
 
-import columns from "./columns";
+const initialData = {
+  payments: [],
+  pageCount: 0,
+  count: 0,
+  page: 0,
+  pageSize: 0,
+};
 
-interface PaymentsTableProps {
-  paymentsResponse: GetPaymentsResponse | null;
-  setFilters: Dispatch<SetStateAction<GetPaymentsParams>>;
-}
+function PaymentsTable() {
+  const pathname = usePathname();
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
-const PaymentsTable = ({ paymentsResponse, setFilters }: PaymentsTableProps) => {
-  if (!paymentsResponse) {
-    return <p className="text-xl mt-36 text-center">Что-то пошло не так</p>;
-  }
+  const paramsString = searchParams.toString();
+
+  const {
+    data,
+    isFetching,
+    isError,
+  } = useQuery(
+    ['payments', paramsString],
+    () => PaymentService.getPayments({
+      params:
+        Object.fromEntries(new URLSearchParams(paramsString)),
+    }),
+    {
+      initialData,
+    },
+  );
+
+  const { payments, pageCount } = data ?? initialData;
 
   const table = useReactTable({
-    data: paymentsResponse.payments,
+    data: payments ?? initialData.payments,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    pageCount: paymentsResponse.pageCount,
-    rowCount: paymentsResponse.payments.length,
+    pageCount,
+    rowCount: payments.length,
   });
 
-  const handleNextPage = () => {
-    setFilters((prev) => ({ ...prev, page: paymentsResponse.page + 1 }));
+  const updateParam = (name: string, value: string) => {
+    const updatedParams = new URLSearchParams(paramsString);
+    updatedParams.set('page', '1');
+    updatedParams.set(name, String(value));
+
+    router.push(`${pathname}?${updatedParams.toString()}`);
   };
 
-  const handlePreviousPage = () => {
-    setFilters((prev) => ({ ...prev, page: paymentsResponse.page - 1 }));
-  };
+  const page = Number(searchParams.get('page') ?? 0);
+
+  useEffect(() => {
+    if (router) {
+      updateParam('page', '1');
+    }
+  }, [router]);
+
+  if (isFetching) {
+    return (
+      <div className="mt-36">
+        <LoadingSpinner size={50} />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return <p className="text-xl mt-36 text-center">Что-то пошло не так</p>;
+  }
+
+  const paginationText = `Страница ${page} из ${pageCount}`;
 
   return (
     <>
@@ -56,15 +104,13 @@ const PaymentsTable = ({ paymentsResponse, setFilters }: PaymentsTableProps) => 
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id} className="hover:bg-transparent">
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id} className="text-white bg-transparent">
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(header.column.columnDef.header, header.getContext())}
-                    </TableHead>
-                  );
-                })}
+                {headerGroup.headers.map((header) => (
+                  <TableHead key={header.id} className="text-white bg-transparent">
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(header.column.columnDef.header, header.getContext())}
+                  </TableHead>
+                ))}
               </TableRow>
             ))}
           </TableHeader>
@@ -90,27 +136,25 @@ const PaymentsTable = ({ paymentsResponse, setFilters }: PaymentsTableProps) => 
           </TableBody>
         </Table>
       </div>
-      {paymentsResponse.payments.length ? (
+      {payments.length ? (
         <div className="flex items-center justify-end space-x-2 py-4">
           <div className="text-black">
-            <p className="text-sm">
-              Страница {paymentsResponse.page} из {paymentsResponse.pageCount}
-            </p>
+            <p className="text-sm">{paginationText}</p>
           </div>
           <div className="space-x-2">
             <Button
               variant="outline"
               className="text-black"
-              onClick={handlePreviousPage}
-              disabled={paymentsResponse.page === 1}
+              onClick={() => updateParam('page', String(page - 1))}
+              disabled={page === 1}
             >
               Назад
             </Button>
             <Button
               variant="outline"
               className="text-black"
-              onClick={handleNextPage}
-              disabled={paymentsResponse.page === paymentsResponse.pageCount}
+              onClick={() => updateParam('page', String(page + 1))}
+              disabled={page === pageCount}
             >
               Вперед
             </Button>
@@ -119,6 +163,6 @@ const PaymentsTable = ({ paymentsResponse, setFilters }: PaymentsTableProps) => 
       ) : null}
     </>
   );
-};
+}
 
 export default PaymentsTable;

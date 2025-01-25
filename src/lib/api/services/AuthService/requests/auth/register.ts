@@ -1,6 +1,6 @@
-import { AxiosCustomRequestConfig } from "@api/types";
-import { AuthClient } from "../../client";
-import { User } from "@lib/types";
+import { AxiosCustomRequestConfig } from '@api/types';
+import { User } from '@lib/types';
+import AuthClient from '@api/services/AuthService/client';
 
 type RegisterUser = {
   email: string;
@@ -9,9 +9,6 @@ type RegisterUser = {
   passwordRepeat: string;
 };
 
-export interface RegisterUserParams extends RegisterUser {}
+export type RegisterUserConfig = AxiosCustomRequestConfig<RegisterUser>;
 
-export type RegisterUserConfig = AxiosCustomRequestConfig<RegisterUserParams>;
-
-export const register = async ({ params, config }: RegisterUserConfig) =>
-  AuthClient.post<User>(`/register`, params, config);
+export const register = async ({ params, config }: RegisterUserConfig) => AuthClient.post<User>('/register', params, config);

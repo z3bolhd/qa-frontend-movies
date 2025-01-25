@@ -1,6 +1,6 @@
-import { AxiosCustomRequestConfig } from "@api/types";
-import { PaymentClient } from "../../client";
-import { Payment } from "@lib/types";
+import { AxiosCustomRequestConfig } from '@api/types';
+import { Payment } from '@lib/types';
+import PaymentClient from '@api/services/PaymentService/client';
 
 type CardInfo = {
   cardNumber: string;
@@ -17,5 +17,4 @@ export interface CreatePaymentParams {
 
 export type CreatePaymentConfig = AxiosCustomRequestConfig<CreatePaymentParams>;
 
-export const createPayment = async ({ params, config }: CreatePaymentConfig) =>
-  PaymentClient.post<Payment>(`/create`, params, config);
+export const createPayment = async ({ params, config }: CreatePaymentConfig) => PaymentClient.post<Payment>('/create', params, config);

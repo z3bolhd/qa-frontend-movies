@@ -1,32 +1,36 @@
-import type { Metadata } from "next";
-import { Rubik } from "next/font/google";
+'use client';
 
-import AuthProvider from "@context/AuthProvider";
-import ToasterContext from "@context/ToasterContext";
+import { ReactNode } from 'react';
 
-import Header from "./_components/Header";
-import "./globals.css";
+import { Rubik } from 'next/font/google';
 
-const rubik = Rubik({ subsets: ["latin"] });
+import AuthProvider from '@context/AuthProvider';
+import ToasterContext from '@context/ToasterContext';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-export const metadata: Metadata = {
-  title: "Cinescope",
-  description: "Сервис по покупке фильмов",
-};
+import Header from './_components/Header';
+import './globals.css';
+
+const rubik = Rubik({ subsets: ['latin'] });
+
+const queryClient = new QueryClient();
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: ReactNode;
 }>) {
   return (
     <html lang="en">
+      <title>Cinescope</title>
       <body className={rubik.className}>
-        <ToasterContext />
-        <AuthProvider>
-          <Header />
-          <div className="w-full min-h-full max-w-[1200px] mx-auto px-10">{children}</div>
-        </AuthProvider>
+        <QueryClientProvider client={queryClient}>
+          <ToasterContext />
+          <AuthProvider>
+            <Header />
+            <div className="w-full min-h-full max-w-[1200px] mx-auto px-10">{children}</div>
+          </AuthProvider>
+        </QueryClientProvider>
       </body>
     </html>
   );

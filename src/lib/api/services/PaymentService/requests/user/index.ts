@@ -1,2 +1,2 @@
-export * from "./getPayments";
-export * from "./getUserPayments";
+export * from './getPayments';
+export * from './getUserPayments';
